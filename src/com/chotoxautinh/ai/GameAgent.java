@@ -24,7 +24,7 @@ public class GameAgent {
 			if (board.hasWon())
 				node.setValue(Integer.MAX_VALUE);
 			else
-				node.setValue(Math.min(board.getActualScore(), 1));
+				node.setValue(Math.min(board.getCurrentScore(), 1));
 		} else if (depth == 0) {
 			setHeuristicScore(node, board);
 		} else {
