@@ -13,18 +13,18 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	public void build(Board board) {
+	public void build(Board board) throws CloneNotSupportedException {
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
-	private Node alphaBeta(Board board, int depth, boolean playerTurn, int alpha, int beta) {
+	private Node alphaBeta(Board board, int depth, boolean playerTurn, int alpha, int beta) throws CloneNotSupportedException {
 		Node node = new Node();
 		Direction bestDirection = Direction.NONE; // NONE = computer's turn
 		if (board.isTerminated()) {
 			if (board.hasWon())
 				node.setValue(Integer.MAX_VALUE);
 			else
-				node.setValue(Math.min(board.getCurrentScore(), 1));
+				node.setValue(Math.min(board.getActualScore(), 1));
 		} else if (depth == 0) {
 			setHeuristicScore(node, board);
 		} else {
