@@ -12,26 +12,34 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.controller.GameController;
+import com.chotoxautinh.game.model.Direction;
 
 public class GameUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int LOW = 0;
-	public static final int MEDIUM = 1;
-	public static final int HIGH = 2;
+	public static final int LOW = 1;
+	public static final int MEDIUM = 2;
+	public static final int HIGH = 3;
 
 	private Application mainApp;
 
@@ -55,13 +63,31 @@ public class GameUI extends JPanel {
 		this.setMainApp(mainApp);
 		initialize();
 
+		setKeyBindings();
 	}
 
 	private void initialize() {
-		gameController = new GameController(LOW);
+		gameController = new GameController(this);
 		setLayout();
 		createGamePanel();
 		createControlPanel();
+	}
+
+	private void setKeyBindings() {
+		ActionMap actionMap = getActionMap();
+		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+		InputMap inputMap = getInputMap(condition);
+
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), Direction.LEFT.getCode());
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), Direction.RIGHT.getCode());
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Direction.UP.getCode());
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), Direction.DOWN.getCode());
+
+		actionMap.put(Direction.LEFT.getCode(), new MoveAction(Direction.LEFT));
+		actionMap.put(Direction.RIGHT.getCode(), new MoveAction(Direction.RIGHT));
+		actionMap.put(Direction.UP.getCode(), new MoveAction(Direction.UP));
+		actionMap.put(Direction.DOWN.getCode(), new MoveAction(Direction.DOWN));
+
 	}
 
 	private void setLayout() {
@@ -221,4 +247,29 @@ public class GameUI extends JPanel {
 		this.gameController = gameController;
 	}
 
+	public ButtonGroup getBtnGroup() {
+		return btnGroup;
+	}
+
+	private class MoveAction extends AbstractAction {
+		private static final long serialVersionUID = 3334610052515363537L;
+		private Direction direction;
+
+		public MoveAction(Direction direction) {
+			this.direction = direction;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent actionEvt) {
+			switch (direction) {
+			case UP:
+				System.out.println("UP");
+				break;
+
+			default:
+				break;
+			}
+			gameController.move(direction);
+		}
+	}
 }

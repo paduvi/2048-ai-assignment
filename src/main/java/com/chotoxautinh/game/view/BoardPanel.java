@@ -60,6 +60,8 @@ public class BoardPanel extends JPanel {
 	}
 
 	private void drawBoard(Graphics g) {
+		if(board == null)
+			return;
 		for (int i = 0; i < board.getSize(); i++) {
 			for (int j = 0; j < board.getSize(); j++) {
 				int x = HGAP * (i + 1) + CELL_SIZE * i;
