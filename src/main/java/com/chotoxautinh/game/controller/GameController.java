@@ -70,16 +70,19 @@ public class GameController {
 	}
 
 	public void move(Direction direction) throws CloneNotSupportedException {
-		board.move(direction);
-		gameUI.setScore(board.getActualScore());
-		if (board.hasWon()) {
-			gameUI.displayWinLayout();
-			return;
-		}
-		board.addRandomCell();
-		if (board.isTerminated()) {
-			gameUI.displayLosePanel(board.getActualScore());
-			return;
+		System.out.println(board.canMove(direction));
+		if (board.canMove(direction)) {
+			board.move(direction);
+			gameUI.setScore(board.getActualScore());
+			if (board.hasWon()) {
+				gameUI.displayWinLayout();
+				return;
+			}
+			board.addRandomCell();
+			if (board.isTerminated()) {
+				gameUI.displayLosePanel(board.getActualScore());
+				return;
+			}
 		}
 	}
 }
