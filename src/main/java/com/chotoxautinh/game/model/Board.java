@@ -19,10 +19,7 @@ public class Board implements Cloneable {
 	public Board(int size) throws Exception {
 		this.setSize(size);
 		this.cells = new int[size][size];
-		//initialize();
-		this.setNumberOfEmptyCells(size * size);
-		this.setValueToAnEmptyCell(2, 3, 0);
-		this.setValueToAnEmptyCell(2, 3, 1);
+		initialize();
 	}
 	
 	public Board(Board board) {
