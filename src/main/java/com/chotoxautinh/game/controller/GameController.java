@@ -71,13 +71,13 @@ public class GameController {
 	public void move(Direction direction) throws CloneNotSupportedException {
 		if(board.canMove(direction)){
 			board.move(direction);
+			board.addRandomCell();
 		}
 		gameUI.setScore(board.getActualScore());
 		if (board.hasWon()) {
 			gameUI.displayWinLayout();
 			return;
 		}
-		board.addRandomCell();
 		if (board.isTerminated()) {
 			gameUI.displayLosePanel(board.getActualScore());
 			return;
