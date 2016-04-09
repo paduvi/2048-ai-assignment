@@ -26,6 +26,7 @@ public class BoardTest {
 		board.move(Direction.UP);
 		board.display();
 		System.out.println("Score: " + board.getActualScore());
+		System.out.println("The number of empty cells: " + board.getNumberOfEmptyCells());
 		
 		System.out.println("After move down");
 		System.out.println("Can move down? " + board.canMove(Direction.DOWN));
