@@ -78,15 +78,15 @@ public class GameUI extends JPanel {
 		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
 		InputMap inputMap = getInputMap(condition);
 
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), Direction.LEFT.getCode());
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), Direction.RIGHT.getCode());
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Direction.UP.getCode());
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), Direction.DOWN.getCode());
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), Direction.LEFT);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), Direction.RIGHT);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Direction.UP);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), Direction.DOWN);
 
-		actionMap.put(Direction.LEFT.getCode(), new MoveAction(Direction.LEFT));
-		actionMap.put(Direction.RIGHT.getCode(), new MoveAction(Direction.RIGHT));
-		actionMap.put(Direction.UP.getCode(), new MoveAction(Direction.UP));
-		actionMap.put(Direction.DOWN.getCode(), new MoveAction(Direction.DOWN));
+		actionMap.put(Direction.LEFT, new MoveAction(Direction.LEFT));
+		actionMap.put(Direction.RIGHT, new MoveAction(Direction.RIGHT));
+		actionMap.put(Direction.UP, new MoveAction(Direction.UP));
+		actionMap.put(Direction.DOWN, new MoveAction(Direction.DOWN));
 
 	}
 
