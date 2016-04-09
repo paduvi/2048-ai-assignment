@@ -35,7 +35,9 @@ public class BoardTest {
 		
 		System.out.println("After move left");
 		board.move(Direction.LEFT);
-		System.out.println("Can move left? " + board.canMove(Direction.LEFT));
+		if(board.canMove(Direction.LEFT)){
+			board.move(Direction.LEFT);
+		}
 		board.display();
 		System.out.println("Score: " + board.getActualScore());
 		
