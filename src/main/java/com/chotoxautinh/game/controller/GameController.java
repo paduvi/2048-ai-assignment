@@ -1,7 +1,6 @@
 package com.chotoxautinh.game.controller;
 
 import java.util.Enumeration;
-
 import javax.swing.AbstractButton;
 
 import com.chotoxautinh.game.model.Board;
@@ -12,7 +11,7 @@ public class GameController {
 	private int depth;
 	private GameUI gameUI;
 	private Board board;
-
+	
 	/**
 	 * 
 	 */
@@ -70,7 +69,9 @@ public class GameController {
 	}
 
 	public void move(Direction direction) throws CloneNotSupportedException {
-		board.move(direction);
+		if(board.canMove(direction)){
+			board.move(direction);
+		}
 		gameUI.setScore(board.getActualScore());
 		if (board.hasWon()) {
 			gameUI.displayWinLayout();

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Board implements Cloneable {
-
+	
 	public static final int TARGET_POINTS = 2048;
 	public static final int MINIMUM_WIN_SCORE = 18432;
 	private final Random randomGenerator = new Random();
@@ -15,11 +15,10 @@ public class Board implements Cloneable {
 	private int size;
 	private int numberOfEmptyCells;
 	private int mergingPoints; // temporary store points after a merging step
-
+	
 	public Board(int size) throws Exception {
 		this.setSize(size);
 		this.cells = new int[size][size];
-
 		initialize();
 	}
 
@@ -261,6 +260,7 @@ public class Board implements Cloneable {
 				}
 			}
 		}
+		
 		return false;
 	}
 
@@ -329,21 +329,22 @@ public class Board implements Cloneable {
 	}
 	
 	public boolean canMove(Direction direction) throws CloneNotSupportedException{
-		Board testBoard = (Board) this.clone();
-		
-		switch(direction){
-		case LEFT:
-			return testBoard.move(Direction.LEFT) == 0; 
-		case RIGHT:
-			return testBoard.move(Direction.RIGHT) == 0; 
-		case UP:
-			return testBoard.move(Direction.UP) == 0;
-		case DOWN:
-			return testBoard.move(Direction.DOWN) == 0;
-		default:
-			return false;
+		if(this.getNumberOfEmptyCells() > 0){
+			return true;
+		} else {			
+			Board testBoard = (Board) this.clone();
+			switch(direction){
+			case LEFT:
+				return testBoard.move(Direction.LEFT) != 0; 
+			case RIGHT:
+				return testBoard.move(Direction.RIGHT) != 0; 
+			case UP:
+				return testBoard.move(Direction.UP) != 0;
+			case DOWN:
+				return testBoard.move(Direction.DOWN) != 0;
+			default:
+				return false;
+			}
 		}
 	}
-	
-	
 }
