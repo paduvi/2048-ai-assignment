@@ -32,6 +32,7 @@ public class Board implements Cloneable {
 		// Initialize two cell at random
 		this.addRandomCell();
 		this.addRandomCell();
+		System.out.println(this.getNumberOfEmptyCells());
 	}
 
 	public boolean addRandomCell() throws IndexOutOfBoundsException {
@@ -213,7 +214,7 @@ public class Board implements Cloneable {
 		if ((row < this.getSize()) && (col < this.getSize())) {
 			if (cells[row][col] == 0) {
 				cells[row][col] = value;
-				numberOfEmptyCells--;
+				this.numberOfEmptyCells--;
 			}
 		} else {
 			throw new IndexOutOfBoundsException("Invalid cell!");
@@ -329,22 +330,89 @@ public class Board implements Cloneable {
 	}
 	
 	public boolean canMove(Direction direction) throws CloneNotSupportedException{
-		if(this.getNumberOfEmptyCells() > 0){
-			return true;
-		} else {			
-			Board testBoard = (Board) this.clone();
-			switch(direction){
-			case LEFT:
-				return testBoard.move(Direction.LEFT) != 0; 
-			case RIGHT:
-				return testBoard.move(Direction.RIGHT) != 0; 
-			case UP:
-				return testBoard.move(Direction.UP) != 0;
-			case DOWN:
-				return testBoard.move(Direction.DOWN) != 0;
-			default:
-				return false;
+		switch(direction){
+		case LEFT:
+			return this.canMoveLeft(); 
+		case RIGHT:
+			return this.canMoveRight(); 
+		case UP:
+			return this.canMoveUp();
+		case DOWN:
+			return this.canMoveDown();
+		default:
+			return false;
+		}
+	}
+	
+	private boolean checkRow(int row){
+		int pivot = -1;
+		for(int col = 0; col < this.getSize(); col++){
+			if(this.cells[row][col] > 0){
+				if(col - pivot > 1){
+					return true;
+				} else {
+					pivot = col;
+				}
 			}
+		}
+		return false;
+	}
+	
+	private boolean canMoveLeft() throws CloneNotSupportedException{
+		/*
+		 * Standard case: There exists a row with:
+		 * - No more than 1 non-empty cell, which is not the first cell of the row
+		 * - Or 2 or 3 cells with at least 1 empty cell between them 
+		 */
+		boolean standardCase = false;
+		
+		for(int row = 0; row < this.getSize(); row++){
+			System.out.println("Check row " + row +  " Result: " + this.checkRow(row));
+			standardCase |= this.checkRow(row);
+		}
+		
+		System.out.println("Standard case: " + standardCase);
+		if(standardCase){
+			return true;
+		} else {
+			Board testBoard = (Board) this.clone();
+			return testBoard.move(Direction.LEFT) != 0;
+		}
+	}
+	
+	private boolean canMoveRight() throws CloneNotSupportedException{
+		this.rotateLeft();
+		this.rotateLeft();
+		if(this.canMoveLeft()){
+			this.rotateRight();
+			this.rotateRight();
+			return true;
+		} else {
+			this.rotateRight();
+			this.rotateRight();
+			return false;
+		}
+	}
+	
+	private boolean canMoveUp() throws CloneNotSupportedException{
+		this.rotateLeft();
+		if(this.canMoveLeft()){
+			this.rotateRight();
+			return true;
+		} else {
+			this.rotateRight();
+			return false;
+		}
+	}
+	
+	private boolean canMoveDown() throws CloneNotSupportedException{
+		this.rotateRight();
+		if(this.canMoveLeft()){
+			this.rotateLeft();
+			return true;
+		} else {
+			this.rotateLeft();
+			return false;
 		}
 	}
 }
