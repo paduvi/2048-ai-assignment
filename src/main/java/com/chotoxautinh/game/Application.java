@@ -12,6 +12,7 @@ import com.chotoxautinh.game.view.ApplicationWindow;
 public class Application {
 
 	private ApplicationWindow frame;
+	private boolean ingame = false;
 
 	/**
 	 * Launch the application.
@@ -45,6 +46,14 @@ public class Application {
 
 	public ApplicationWindow getFrame() {
 		return frame;
+	}
+
+	public boolean isIngame() {
+		return ingame;
+	}
+
+	public void setIngame(boolean ingame) {
+		this.ingame = ingame;
 	}
 
 }

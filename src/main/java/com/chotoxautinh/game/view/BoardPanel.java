@@ -60,12 +60,12 @@ public class BoardPanel extends JPanel {
 	}
 
 	private void drawBoard(Graphics g) {
-		if(board == null)
+		if (board == null)
 			return;
 		for (int row = 0; row < board.getSize(); row++) {
 			for (int col = 0; col < board.getSize(); col++) {
-				int y = HGAP * (row + 1) + CELL_SIZE * row;
 				int x = VGAP * (col + 1) + CELL_SIZE * col;
+				int y = HGAP * (row + 1) + CELL_SIZE * row;
 				int cellValue = board.getCells()[row][col];
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

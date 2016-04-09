@@ -13,15 +13,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -31,6 +34,7 @@ import javax.swing.border.LineBorder;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.controller.GameController;
+import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
 
 public class GameUI extends JPanel {
@@ -40,6 +44,10 @@ public class GameUI extends JPanel {
 	public static final int LOW = 1;
 	public static final int MEDIUM = 2;
 	public static final int HIGH = 3;
+
+	public static final String WIN = "win";
+	public static final String LOSE = "lose";
+	public static final String INGAME = "board";
 
 	private Application mainApp;
 
@@ -67,10 +75,11 @@ public class GameUI extends JPanel {
 	}
 
 	private void initialize() {
-		gameController = new GameController(this);
 		setLayout();
-		createGamePanel();
 		createControlPanel();
+		createGamePanel();
+
+		gameController = new GameController(this);
 	}
 
 	private void setKeyBindings() {
@@ -114,18 +123,16 @@ public class GameUI extends JPanel {
 		gameLayout = new CardLayout(0, 0);
 		gamePanel.setLayout(gameLayout);
 
-		boardPanel = new BoardPanel(gameController.getBoard());
-		gamePanel.add(boardPanel, "boardPanel");
+		boardPanel = new BoardPanel(null);
+		gamePanel.add(boardPanel, INGAME);
 
 		ImagePanel winPanel = new ImagePanel(getClass().getResource("/tiles/2048.gif"));
-		gamePanel.add(winPanel, "winPanel");
+		gamePanel.add(winPanel, WIN);
 
 		ImagePanel losePanel = new ImagePanel(getClass().getResource("/tiles/game-over.gif"));
-		gamePanel.add(losePanel, "losePanel");
+		gamePanel.add(losePanel, LOSE);
 
-		displayGameLayout("boardPanel");
-		// displayGameLayout("winPanel");
-		// displayGameLayout("losePanel");
+		displayGameLayout(INGAME);
 	}
 
 	public void displayGameLayout(String name) {
@@ -228,6 +235,7 @@ public class GameUI extends JPanel {
 		btnReplay.setBounds(20, 397, 152, 23);
 		btnReplay.setFocusable(false);
 		btnReplay.setBackground(SystemColor.controlLtHighlight);
+		btnReplay.addActionListener(newGameHandler);
 		controlPanel.add(btnReplay);
 	}
 
@@ -251,6 +259,41 @@ public class GameUI extends JPanel {
 		return btnGroup;
 	}
 
+	public void setScore(int score) {
+		scoreLbl.setText(String.valueOf(score));
+	}
+
+	public void setBoard(Board board) {
+		boardPanel.setBoard(board);
+	}
+
+	public void displayBoardPanel() {
+		displayGameLayout(INGAME);
+		mainApp.setIngame(true);
+	}
+
+	public void displayLosePanel(int score) {
+		JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!", "GAME OVER! Your score is: " + score,
+				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
+		displayGameLayout(LOSE);
+		mainApp.setIngame(false);
+	}
+
+	public void displayWinLayout() {
+		displayGameLayout(WIN);
+		mainApp.setIngame(false);
+	}
+
+	private ActionListener newGameHandler = o -> {
+		Object objButtons[] = { "Yes", "No" };
+		int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
+				"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+				new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
+		if (promptResult == JOptionPane.YES_OPTION) {
+			gameController.initialize();
+		}
+	};
+
 	private class MoveAction extends AbstractAction {
 		private static final long serialVersionUID = 3334610052515363537L;
 		private Direction direction;
@@ -261,7 +304,13 @@ public class GameUI extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
-			gameController.move(direction);
+			try {
+				if (mainApp.isIngame())
+					gameController.move(direction);
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+
 }

@@ -16,16 +16,10 @@ public class Board implements Cloneable {
 	private int numberOfEmptyCells;
 	private int mergingPoints; // temporary store points after a merging step
 
-	public Board() {
-		this.setSize(0);
-		this.cells = null;
-		this.setNumberOfEmptyCells(0);
-	}
-
 	public Board(int size) throws Exception {
 		this.setSize(size);
 		this.cells = new int[size][size];
-		
+
 		initialize();
 	}
 
@@ -41,7 +35,7 @@ public class Board implements Cloneable {
 		this.addRandomCell();
 	}
 
-	private boolean addRandomCell() throws Exception {
+	public boolean addRandomCell() throws IndexOutOfBoundsException {
 		List<Integer> emptyCells = this.getEmptyCellIds();
 		int listSize = emptyCells.size();
 
@@ -179,6 +173,7 @@ public class Board implements Cloneable {
 					this.cells[row][previousPosition] *= 2;
 					this.cells[row][col] = 0;
 					setMergingPoints(this.cells[row][previousPosition]);
+					numberOfEmptyCells++;
 					lastMergePosition = previousPosition + 1;
 				} else if (this.cells[row][previousPosition] != this.cells[row][col] && (previousPosition + 1 != col)) {
 					this.cells[row][previousPosition + 1] = this.cells[row][col];
@@ -200,9 +195,6 @@ public class Board implements Cloneable {
 	}
 
 	public int getNumberOfEmptyCells() {
-		if (this.numberOfEmptyCells == 0) {
-			this.setNumberOfEmptyCells(this.getEmptyCellIds().size());
-		}
 		return this.numberOfEmptyCells;
 	}
 
@@ -220,14 +212,14 @@ public class Board implements Cloneable {
 		return cellList;
 	}
 
-	public void setValueToAnEmptyCell(int value, int row, int col) throws Exception {
+	public void setValueToAnEmptyCell(int value, int row, int col) throws IndexOutOfBoundsException {
 		if ((row < this.getSize()) && (col < this.getSize())) {
 			if (cells[row][col] == 0) {
 				cells[row][col] = value;
-				this.setNumberOfEmptyCells(this.getNumberOfEmptyCells() - 1);
+				numberOfEmptyCells--;
 			}
 		} else {
-			throw new Exception("Invalid cell!");
+			throw new IndexOutOfBoundsException("Invalid cell!");
 		}
 	}
 

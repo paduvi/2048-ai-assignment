@@ -28,13 +28,16 @@ public class GameController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		gameUI.setScore(0);
+		gameUI.setBoard(board);
+		gameUI.displayGameLayout(GameUI.INGAME);
 	}
 
 	public int getDepth() {
 		return depth;
 	}
-	
-	public void setDepth(){
+
+	public void setDepth() {
 		Enumeration<AbstractButton> list = gameUI.getBtnGroup().getElements();
 		int index = 0;
 		while (list.hasMoreElements()) {
@@ -57,7 +60,7 @@ public class GameController {
 	public void setBoard(Board board) {
 		this.board = board;
 	}
-	
+
 	public GameUI getGameUI() {
 		return gameUI;
 	}
@@ -65,8 +68,18 @@ public class GameController {
 	public void setGameUI(GameUI gameUI) {
 		this.gameUI = gameUI;
 	}
-	
-	public void move(Direction direction){
+
+	public void move(Direction direction) throws CloneNotSupportedException {
 		board.move(direction);
+		gameUI.setScore(board.getActualScore());
+		if (board.hasWon()) {
+			gameUI.displayWinLayout();
+			return;
+		}
+		board.addRandomCell();
+		if (board.isTerminated()) {
+			gameUI.displayLosePanel(board.getActualScore());
+			return;
+		}
 	}
 }

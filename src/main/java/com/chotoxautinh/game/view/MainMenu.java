@@ -34,7 +34,7 @@ public class MainMenu extends JPanel {
 
 	private static final int NEW_GAME_ICON = 1;
 	private static final int SIMULATION_ICON = 8;
-	private static final int HIGH_SCORE_ICON = 24;
+	private static final int HIGH_SCORE_ICON = 27;
 
 	private Application mainApp;
 	private JPanel mainMn;
