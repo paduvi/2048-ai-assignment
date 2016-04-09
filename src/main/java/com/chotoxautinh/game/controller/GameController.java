@@ -30,7 +30,7 @@ public class GameController {
 		}
 		gameUI.setScore(0);
 		gameUI.setBoard(board);
-		gameUI.displayGameLayout(GameUI.INGAME);
+		gameUI.displayBoardPanel();
 	}
 
 	public int getDepth() {

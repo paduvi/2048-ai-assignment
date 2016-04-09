@@ -85,6 +85,16 @@ public class ApplicationWindow extends JFrame {
 	}
 
 	public void backToMainMenu() {
+		if (mainApp.isIngame()) {
+			Object objButtons[] = { "Yes", "No" };
+			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
+					"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.WARNING_MESSAGE, new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")),
+					objButtons, objButtons[1]);
+			if (promptResult == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
 		Component[] components = mainApp.getFrame().getContentPane().getComponents();
 		for (Component component : components) {
 			if (component.isVisible() && !(component instanceof MainMenu)) {

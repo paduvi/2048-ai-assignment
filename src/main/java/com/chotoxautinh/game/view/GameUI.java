@@ -285,11 +285,15 @@ public class GameUI extends JPanel {
 	}
 
 	private ActionListener newGameHandler = o -> {
-		Object objButtons[] = { "Yes", "No" };
-		int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
-				"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-				new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
-		if (promptResult == JOptionPane.YES_OPTION) {
+		if (mainApp.isIngame()) {
+			Object objButtons[] = { "Yes", "No" };
+			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
+					"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+					new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
+			if (promptResult == JOptionPane.YES_OPTION) {
+				gameController.initialize();
+			}
+		} else {
 			gameController.initialize();
 		}
 	};
