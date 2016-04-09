@@ -28,17 +28,20 @@ public class BoardTest {
 		System.out.println("Score: " + board.getActualScore());
 		
 		System.out.println("After move down");
+		System.out.println("Can move down? " + board.canMove(Direction.DOWN));
 		board.move(Direction.DOWN);
 		board.display();
 		System.out.println("Score: " + board.getActualScore());
 		
 		System.out.println("After move left");
 		board.move(Direction.LEFT);
+		System.out.println("Can move left? " + board.canMove(Direction.LEFT));
 		board.display();
 		System.out.println("Score: " + board.getActualScore());
 		
 		System.out.println("After move right");
 		board.move(Direction.RIGHT);
+		System.out.println("Can move right? " + board.canMove(Direction.RIGHT));
 		board.display();
 		System.out.println("Score: " + board.getActualScore());
 	}
