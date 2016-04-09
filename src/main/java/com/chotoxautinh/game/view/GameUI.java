@@ -261,14 +261,6 @@ public class GameUI extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
-			switch (direction) {
-			case UP:
-				System.out.println("UP");
-				break;
-
-			default:
-				break;
-			}
 			gameController.move(direction);
 		}
 	}

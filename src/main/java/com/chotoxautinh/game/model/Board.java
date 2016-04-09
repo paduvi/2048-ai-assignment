@@ -31,9 +31,9 @@ public class Board implements Cloneable {
 
 	public void initialize() throws Exception {
 		actualScore = 0;
-		for (int i = 0; i < size; i++)
-			for (int j = 0; j < size; j++)
-				cells[i][j] = 0;
+		for (int row = 0; row < size; row++)
+			for (int col = 0; col < size; col++)
+				cells[row][col] = 0;
 		this.setNumberOfEmptyCells(size * size);
 
 		// Initialize two cell at random
