@@ -12,7 +12,7 @@ public class GameAgentTest {
 			System.out.println("If use a tree with depth = " + i);
 			long start = System.currentTimeMillis();
 			GameAgent gameAgent = new GameAgent(i);
-			Board copyBoard = new Board(board);
+			Board copyBoard = (Board) board.clone();
 			System.out.println("Original board");
 			copyBoard.display();
 			Direction direction = gameAgent.process(copyBoard);
