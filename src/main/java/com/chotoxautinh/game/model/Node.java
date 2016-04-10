@@ -9,6 +9,7 @@ public class Node {
 	private List<Node> children;
 	private boolean leaf = false;
 	private Direction direction;
+	private Direction valueDirOfChild;
 	
 	public Node() {
 		children = new ArrayList<Node>();
@@ -43,6 +44,14 @@ public class Node {
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+	
+	public void setValueDirOfChild(Direction dir) {
+		this.valueDirOfChild = dir;
+	}
+	
+	public Direction getValueDirOfChild() {
+		return this.valueDirOfChild;
 	}
 
 }

@@ -45,13 +45,21 @@ public class GameAgent {
 				for (int i = 1; i < Direction.values().length; i++) {
 					Board boardOfChild = (Board) board.clone();
 					// boardOfChild = board;
+					System.out.println("Original board: ");
+					boardOfChild.display();
+					System.out.println();
 					Node child = new Node();
-					boardOfChild.move(Direction.values()[i]);
-					child = alphaBeta(boardOfChild, depth - 1, false, alpha, beta);
-					alpha = Math.max(alpha, child.getValue());
-					node.appendChild(child);
-					if (beta <= alpha)
-						break;
+					if (boardOfChild.canMove(Direction.values()[i])) {
+						//System.out.println("After move " + i);
+						boardOfChild.move(Direction.values()[i]);
+						//boardOfChild.display();
+						child = alphaBeta(boardOfChild, depth - 1, false, alpha, beta);
+						alpha = Math.max(alpha, child.getValue());
+						child.setValueDirOfChild(Direction.values()[i]);
+						node.appendChild(child);
+						if (beta <= alpha)
+							break;
+					}
 				}
 				node.setValue(alpha);
 
@@ -85,11 +93,11 @@ public class GameAgent {
 		// find bestDirection of Player
 		if (playerTurn && !node.isLeaf()) {
 			int maxHeuristic = node.getChildren().get(0).getValue();
-			bestDirection = Direction.values()[1];
+			bestDirection = node.getChildren().get(0).getValueDirOfChild();
 			for (int i = 0; i < node.getChildren().size(); i++) {
 				if (node.getChildren().get(i).getValue() > maxHeuristic) {
 					maxHeuristic = node.getChildren().get(i).getValue();
-					bestDirection = Direction.values()[i + 1];
+					bestDirection = node.getChildren().get(i).getValueDirOfChild();
 				}
 			}
 		}
