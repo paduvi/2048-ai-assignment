@@ -1,5 +1,6 @@
 package com.chotoxautinh.game.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
@@ -8,7 +9,10 @@ public class Node {
 	private List<Node> children;
 	private boolean leaf = false;
 	private Direction direction;
-
+	
+	public Node() {
+		children = new ArrayList<Node>();
+	}
 	public int getValue() {
 		return value;
 	}

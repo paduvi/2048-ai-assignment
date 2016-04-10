@@ -21,6 +21,17 @@ public class Board implements Cloneable {
 		this.cells = new int[size][size];
 		initialize();
 	}
+	
+	public Board(Board board) {
+		this.setSize(board.getSize());
+		this.cells = new int[board.getSize()][board.getSize()];
+		this.numberOfEmptyCells = board.getNumberOfEmptyCells();
+		this.actualScore = board.actualScore;
+		
+		for (int row = 0; row < size; row++)
+			for (int col = 0; col < size; col++)
+				cells[row][col] = board.cells[row][col];
+	}
 
 	public void initialize() throws IndexOutOfBoundsException {
 		actualScore = 0;
@@ -218,6 +229,16 @@ public class Board implements Cloneable {
 			}
 		} else {
 			throw new IndexOutOfBoundsException("Invalid cell!");
+		}
+	}
+	
+	// this method is created by Khang
+	public void setValueToCell(int value, int row, int col) throws Exception{
+		if ((row < this.getSize()) && (col < this.getSize())) {
+			if (cells[row][col] == 0) this.setNumberOfEmptyCells(this.getNumberOfEmptyCells() - 1);
+			cells[row][col] = value;
+		} else {
+			throw new Exception("Invalid cell!");
 		}
 	}
 
