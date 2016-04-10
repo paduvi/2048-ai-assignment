@@ -42,8 +42,6 @@ public class GameAgent {
 			// alpha-beta pruning
 			if (playerTurn) {
 				for (int i = 1; i <= Direction.values().length; i++) {
-					if (!board.canMove(Direction.values()[i]))
-						continue;
 					Board boardOfChild = (Board) board.clone();
 					// boardOfChild = board;
 					Node child = new Node();
