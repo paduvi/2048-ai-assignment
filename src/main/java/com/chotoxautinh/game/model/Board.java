@@ -5,24 +5,24 @@ import java.util.List;
 import java.util.Random;
 
 public class Board implements Cloneable {
-	
+
 	public static final int TARGET_POINTS = 2048;
 	public static final int MINIMUM_WIN_SCORE = 18432;
 	private final Random randomGenerator = new Random();
-	
+
 	private int[][] cells;
 	private int actualScore;
 	private int size;
 	private int numberOfEmptyCells;
 	private int mergingPoints; // temporary store points after a merging step
-	
-	public Board(int size) throws Exception {
+
+	public Board(int size) throws IndexOutOfBoundsException {
 		this.setSize(size);
 		this.cells = new int[size][size];
 		initialize();
 	}
 
-	public void initialize() throws Exception {
+	public void initialize() throws IndexOutOfBoundsException {
 		actualScore = 0;
 		for (int row = 0; row < size; row++)
 			for (int col = 0; col < size; col++)
@@ -232,8 +232,7 @@ public class Board implements Cloneable {
 				// is no empty cells.
 				Board terminationTestBoard = (Board) this.clone();
 
-				if (terminationTestBoard.move(Direction.LEFT) == 0 
-						&& terminationTestBoard.move(Direction.UP) == 0
+				if (terminationTestBoard.move(Direction.LEFT) == 0 && terminationTestBoard.move(Direction.UP) == 0
 						&& terminationTestBoard.move(Direction.DOWN) == 0
 						&& terminationTestBoard.move(Direction.RIGHT) == 0) {
 					isTerminated = true;
@@ -261,7 +260,7 @@ public class Board implements Cloneable {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -329,12 +328,16 @@ public class Board implements Cloneable {
 		return this.cells;
 	}
 	
-	public boolean canMove(Direction direction) throws CloneNotSupportedException{
-		switch(direction){
+	public void setCells(int[][] cells){
+		this.cells = cells;
+	}
+
+	public boolean canMove(Direction direction) throws CloneNotSupportedException {
+		switch (direction) {
 		case LEFT:
-			return this.canMoveLeft(); 
+			return this.canMoveLeft();
 		case RIGHT:
-			return this.canMoveRight(); 
+			return this.canMoveRight();
 		case UP:
 			return this.canMoveUp();
 		case DOWN:
@@ -343,12 +346,12 @@ public class Board implements Cloneable {
 			return false;
 		}
 	}
-	
-	private boolean checkRow(int row){
+
+	private boolean checkRow(int row) {
 		int pivot = -1;
-		for(int col = 0; col < this.getSize(); col++){
-			if(this.cells[row][col] > 0){
-				if(col - pivot > 1){
+		for (int col = 0; col < this.getSize(); col++) {
+			if (this.cells[row][col] > 0) {
+				if (col - pivot > 1) {
 					return true;
 				} else {
 					pivot = col;
@@ -357,33 +360,33 @@ public class Board implements Cloneable {
 		}
 		return false;
 	}
-	
-	private boolean canMoveLeft() throws CloneNotSupportedException{
+
+	private boolean canMoveLeft() throws CloneNotSupportedException {
 		/*
-		 * Standard case: There exists a row with:
-		 * - No more than 1 non-empty cell, which is not the first cell of the row
-		 * - Or 2 or 3 cells with at least 1 empty cell between them 
+		 * Standard case: There exists a row with: - No more than 1 non-empty
+		 * cell, which is not the first cell of the row - Or 2 or 3 cells with
+		 * at least 1 empty cell between them
 		 */
 		boolean standardCase = false;
-		
-		for(int row = 0; row < this.getSize(); row++){
-			System.out.println("Check row " + row +  " Result: " + this.checkRow(row));
+
+		for (int row = 0; row < this.getSize(); row++) {
+			System.out.println("Check row " + row + " Result: " + this.checkRow(row));
 			standardCase |= this.checkRow(row);
 		}
-		
+
 		System.out.println("Standard case: " + standardCase);
-		if(standardCase){
+		if (standardCase) {
 			return true;
 		} else {
 			Board testBoard = (Board) this.clone();
 			return testBoard.move(Direction.LEFT) != 0;
 		}
 	}
-	
-	private boolean canMoveRight() throws CloneNotSupportedException{
+
+	private boolean canMoveRight() throws CloneNotSupportedException {
 		this.rotateLeft();
 		this.rotateLeft();
-		if(this.canMoveLeft()){
+		if (this.canMoveLeft()) {
 			this.rotateRight();
 			this.rotateRight();
 			return true;
@@ -393,10 +396,10 @@ public class Board implements Cloneable {
 			return false;
 		}
 	}
-	
-	private boolean canMoveUp() throws CloneNotSupportedException{
+
+	private boolean canMoveUp() throws CloneNotSupportedException {
 		this.rotateLeft();
-		if(this.canMoveLeft()){
+		if (this.canMoveLeft()) {
 			this.rotateRight();
 			return true;
 		} else {
@@ -404,10 +407,10 @@ public class Board implements Cloneable {
 			return false;
 		}
 	}
-	
-	private boolean canMoveDown() throws CloneNotSupportedException{
+
+	private boolean canMoveDown() throws CloneNotSupportedException {
 		this.rotateRight();
-		if(this.canMoveLeft()){
+		if (this.canMoveLeft()) {
 			this.rotateLeft();
 			return true;
 		} else {

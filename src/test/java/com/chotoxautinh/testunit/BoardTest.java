@@ -1,4 +1,4 @@
-package testunit;
+package com.chotoxautinh.testunit;
 
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;

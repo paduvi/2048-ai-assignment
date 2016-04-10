@@ -1,6 +1,7 @@
 package com.chotoxautinh.game.controller;
 
 import java.util.Enumeration;
+
 import javax.swing.AbstractButton;
 
 import com.chotoxautinh.game.model.Board;
@@ -11,6 +12,7 @@ public class GameController {
 	private int depth;
 	private GameUI gameUI;
 	private Board board;
+	private Board oldBoard;
 
 	/**
 	 * 
@@ -22,11 +24,8 @@ public class GameController {
 	}
 
 	public void initialize() {
-		try {
-			setBoard(new Board(4));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setBoard(new Board(4));
+		gameUI.toggleUndoBtn(false);
 		gameUI.setScore(0);
 		gameUI.setBoard(board);
 		gameUI.displayBoardPanel();
@@ -68,19 +67,43 @@ public class GameController {
 		this.gameUI = gameUI;
 	}
 
+	public void toggleUndoBtn(boolean enabled) {
+		if (enabled) {
+			try {
+				setOldBoard((Board) board.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			setBoard(oldBoard);
+			gameUI.setBoard(oldBoard);
+			gameUI.setScore(oldBoard.getActualScore());
+		}
+		gameUI.toggleUndoBtn(enabled);
+	}
+
 	public void move(Direction direction) throws CloneNotSupportedException {
 		if (board.canMove(direction)) {
+			toggleUndoBtn(true);
 			board.move(direction);
+			gameUI.setScore(board.getActualScore());
+			if (board.hasWon()) {
+				gameUI.displayWinLayout();
+				return;
+			}
 			board.addRandomCell();
+			if (board.isTerminated()) {
+				gameUI.displayLosePanel(board.getActualScore());
+				return;
+			}
 		}
-		gameUI.setScore(board.getActualScore());
-		if (board.hasWon()) {
-			gameUI.displayWinLayout();
-			return;
-		}
-		if (board.isTerminated()) {
-			gameUI.displayLosePanel(board.getActualScore());
-			return;
-		}
+	}
+
+	public Board getOldBoard() {
+		return oldBoard;
+	}
+
+	public void setOldBoard(Board oldBoard) {
+		this.oldBoard = oldBoard;
 	}
 }

@@ -1,12 +1,12 @@
-package com.chotoxautinh.game.controller;
+package com.chotoxautinh.game.model;
 
 public class BoardStack {
-	private BoardStackElement[] boardStack;
+	private Board[] boardStack;
 	private final int MAX_CAPACITY = 5;
 	private int top;
 	
 	public BoardStack(){
-		boardStack = new BoardStackElement[MAX_CAPACITY];
+		boardStack = new Board[MAX_CAPACITY];
 		this.setTop(-1);
 	}
 	
@@ -18,7 +18,7 @@ public class BoardStack {
 		this.top = top;
 	}
 	
-	public void push(BoardStackElement element){
+	public void push(Board element){
 		if(this.getTop() == MAX_CAPACITY - 1){
 			for(int i = 0; i < MAX_CAPACITY - 1; i++){
 				boardStack[i] = boardStack[i + 1];
@@ -29,9 +29,9 @@ public class BoardStack {
 		}
 	}
 	
-	public BoardStackElement pop(){
+	public Board pop(){
 		if(top < 0) throw new IndexOutOfBoundsException();
-		BoardStackElement poppedBoard = boardStack[top --];
+		Board poppedBoard = boardStack[top --];
 		boardStack[top + 1] = null;
 		return poppedBoard;
 	}

@@ -59,6 +59,7 @@ public class GameUI extends JPanel {
 	private CardLayout gameLayout;
 	private BoardPanel boardPanel;
 
+	private JButton btnUndo;
 	private JLabel scoreLbl;
 	private JLabel hintLbl;
 	private JProgressBar progressBar;
@@ -161,10 +162,11 @@ public class GameUI extends JPanel {
 		scoreLbl.setBounds(83, 11, 89, 14);
 		controlPanel.add(scoreLbl);
 
-		JButton btnUndo = new JButton("Undo");
+		btnUndo = new JButton("Undo");
 		btnUndo.setBounds(20, 36, 70, 23);
 		btnUndo.setFocusable(false);
 		btnUndo.setBackground(SystemColor.info);
+		btnUndo.addActionListener(undoHandler);
 		controlPanel.add(btnUndo);
 
 		JButton btnAuto = new JButton("Auto");
@@ -283,6 +285,12 @@ public class GameUI extends JPanel {
 		displayGameLayout(WIN);
 		mainApp.setIngame(false);
 	}
+
+	public void toggleUndoBtn(boolean enabled) {
+		btnUndo.setEnabled(enabled);
+	}
+
+	private ActionListener undoHandler = o -> gameController.toggleUndoBtn(false);
 
 	private ActionListener newGameHandler = o -> {
 		if (mainApp.isIngame()) {
