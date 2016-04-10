@@ -221,6 +221,7 @@ public class GameUI extends JPanel {
 		btnRefresh.setBounds(56, 257, 89, 23);
 		btnRefresh.setFocusable(false);
 		btnRefresh.setBackground(SystemColor.inactiveCaption);
+		btnRefresh.addActionListener(refreshHandler);
 		controlPanel.add(btnRefresh);
 
 		JSeparator separator_1 = new JSeparator();
@@ -323,6 +324,11 @@ public class GameUI extends JPanel {
 		} else {
 			gameController.initialize();
 		}
+	};
+
+	private ActionListener refreshHandler = o -> {
+		gameController.setDepth();
+		gameController.getHint();
 	};
 
 	private class MoveAction extends AbstractAction {

@@ -14,6 +14,7 @@ public class GameAgent {
 	}
 
 	public Direction process(Board board) throws CloneNotSupportedException {
+		System.out.println(depth);
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		return treeRoot.getDirection();
 	}

@@ -12,7 +12,7 @@ import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.view.GameUI;
 
 public class GameController {
-	private int depth;
+	private int depth = 3;
 	private GameUI gameUI;
 	private Board board;
 	private Board oldBoard;
@@ -24,12 +24,12 @@ public class GameController {
 	 */
 	public GameController(GameUI gameUI) {
 		setGameUI(gameUI);
+		gameAgent = new GameAgent(depth);
 		setDepth();
 		initialize();
 	}
 
 	public void initialize() {
-		gameAgent = new GameAgent(depth);
 		setBoard(new Board(4));
 		getHint();
 		gameUI.postGameControllerInit();
@@ -46,9 +46,10 @@ public class GameController {
 			AbstractButton btn = list.nextElement();
 			index++;
 			if (btn.isSelected()) {
-				setDepth(index * 2 + 1);
+				setDepth(index * 2);
 			}
 		}
+		gameAgent.setDepth(depth);
 	}
 
 	private void setDepth(int depth) {
@@ -115,7 +116,7 @@ public class GameController {
 		gameUI.receiveHint(direction);
 	}
 
-	private void getHint() {
+	public void getHint() {
 		if (getHintTask != null)
 			getHintTask.cancel(true);
 		getHintTask = new GetHintTask();
