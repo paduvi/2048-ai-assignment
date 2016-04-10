@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.chotoxautinh.util.MathUtils;
+
 public class Board implements Cloneable {
 
 	public static final int TARGET_POINTS = 2048;
-	public static final int MINIMUM_WIN_SCORE = TARGET_POINTS * 10;
+	public static final int MINIMUM_WIN_SCORE = TARGET_POINTS * (MathUtils.log2floor(TARGET_POINTS) - 2);
 	private final Random randomGenerator = new Random();
 
 	private int[][] cells;
@@ -20,17 +22,6 @@ public class Board implements Cloneable {
 		this.setSize(size);
 		this.cells = new int[size][size];
 		initialize();
-	}
-
-	public Board(Board board) {
-		this.setSize(board.getSize());
-		this.cells = new int[board.getSize()][board.getSize()];
-		this.numberOfEmptyCells = board.getNumberOfEmptyCells();
-		this.actualScore = board.actualScore;
-
-		for (int row = 0; row < size; row++)
-			for (int col = 0; col < size; col++)
-				cells[row][col] = board.cells[row][col];
 	}
 
 	public void initialize() throws IndexOutOfBoundsException {
@@ -171,10 +162,8 @@ public class Board implements Cloneable {
 					--previousPosition;
 				}
 
-				if (previousPosition == col) {
-					// we can't move this at all
-				} else if (this.cells[row][previousPosition] == 0) {
-					// move to empty value
+				if (this.cells[row][previousPosition] == 0) {
+					// move to empty cell
 					this.cells[row][previousPosition] = this.cells[row][col];
 					this.cells[row][col] = 0;
 				} else if (this.cells[row][previousPosition] == this.cells[row][col]) {

@@ -1,9 +1,12 @@
 package com.chotoxautinh.game.controller;
 
 import java.util.Enumeration;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractButton;
+import javax.swing.SwingWorker;
 
+import com.chotoxautinh.ai.GameAgent;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.view.GameUI;
@@ -13,6 +16,8 @@ public class GameController {
 	private GameUI gameUI;
 	private Board board;
 	private Board oldBoard;
+	private GameAgent gameAgent;
+	private SwingWorker<Direction, Object> getHintTask;
 
 	/**
 	 * 
@@ -24,7 +29,9 @@ public class GameController {
 	}
 
 	public void initialize() {
+		gameAgent = new GameAgent(depth);
 		setBoard(new Board(4));
+		getHint();
 		gameUI.postGameControllerInit();
 	}
 
@@ -65,8 +72,8 @@ public class GameController {
 		this.gameUI = gameUI;
 	}
 
-	public void toggleBtn(boolean enabled) {
-		gameUI.toggleBtn(enabled);
+	public void moveResponse() {
+		gameUI.receiveMoveResponse();
 	}
 
 	private void saveHistory() {
@@ -75,11 +82,6 @@ public class GameController {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void backToPrevious() {
-		setBoard(oldBoard);
-		gameUI.toggleBtn(false);
 	}
 
 	public void move(Direction direction) throws CloneNotSupportedException {
@@ -96,7 +98,8 @@ public class GameController {
 				gameUI.displayLoseResult();
 				return;
 			}
-			toggleBtn(true);
+			getHint();
+			moveResponse();
 		}
 	}
 
@@ -106,5 +109,46 @@ public class GameController {
 
 	public void setOldBoard(Board oldBoard) {
 		this.oldBoard = oldBoard;
+	}
+
+	private void handleHint(Direction direction) {
+		gameUI.receiveHint(direction);
+	}
+
+	private void getHint() {
+		if (getHintTask != null)
+			getHintTask.cancel(true);
+		getHintTask = new GetHintTask();
+		getHintTask.execute();
+	}
+
+	private class GetHintTask extends SwingWorker<Direction, Object> {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see javax.swing.SwingWorker#doInBackground()
+		 */
+		@Override
+		protected Direction doInBackground() throws Exception {
+			return gameAgent.process(board);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see javax.swing.SwingWorker#done()
+		 */
+		@Override
+		protected void done() {
+			try {
+				handleHint(get());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }

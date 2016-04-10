@@ -1,7 +1,7 @@
 package com.chotoxautinh.game.model;
 
 public enum Direction {
-	NONE(0, "none"), UP(1, "up"), RIGHT(2, "right"), DOWN(3, "down"), LEFT(4, "left");
+	NONE(0, "None"), UP(1, "Up"), RIGHT(2, "Right"), DOWN(3, "Down"), LEFT(4, "Left");
 
 	private final int code;
 	private final String description;

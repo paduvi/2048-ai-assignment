@@ -85,7 +85,7 @@ public class GameUI extends JPanel {
 
 	public void postGameControllerInit() {
 		displayBoardPanel();
-		toggleBtn(false);
+		btnUndo.setEnabled(false);
 	}
 
 	private void setKeyBindings() {
@@ -283,19 +283,33 @@ public class GameUI extends JPanel {
 				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
 				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
 		displayGameLayout(LOSE);
+		btnUndo.setEnabled(false);
 		mainApp.setIngame(false);
 	}
 
 	public void displayWinResult() {
 		displayGameLayout(WIN);
+		btnUndo.setEnabled(false);
 		mainApp.setIngame(false);
 	}
 
-	public void toggleBtn(boolean enabled) {
-		btnUndo.setEnabled(enabled);
+	public void receiveMoveResponse() {
+		btnUndo.setEnabled(true);
 	}
 
-	private ActionListener undoHandler = o -> gameController.toggleBtn(false);
+	public void receiveHint(Direction direction) {
+		if (direction == Direction.NONE)
+			hintLbl.setText("Cannot calculate hint");
+		else
+			hintLbl.setText(direction.getDescription());
+		progressBar.setIndeterminate(false);
+		progressBar.setValue(0);
+	}
+
+	private ActionListener undoHandler = o -> {
+		gameController.setBoard(gameController.getOldBoard());
+		btnUndo.setEnabled(false);
+	};
 
 	private ActionListener newGameHandler = o -> {
 		if (mainApp.isIngame()) {
@@ -322,8 +336,11 @@ public class GameUI extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
 			try {
-				if (mainApp.isIngame())
+				if (mainApp.isIngame()) {
 					gameController.move(direction);
+					hintLbl.setText("Loading...");
+					progressBar.setIndeterminate(true);
+				}
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
 			}
