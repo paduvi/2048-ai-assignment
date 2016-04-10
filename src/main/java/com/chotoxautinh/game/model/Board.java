@@ -7,7 +7,7 @@ import java.util.Random;
 public class Board implements Cloneable {
 
 	public static final int TARGET_POINTS = 2048;
-	public static final int MINIMUM_WIN_SCORE = 18432;
+//	public static final int MINIMUM_WIN_SCORE = 0;
 	private final Random randomGenerator = new Random();
 
 	private int[][] cells;
@@ -270,9 +270,9 @@ public class Board implements Cloneable {
 	 * MINIMUM_WIN_SCORE, he (definitely) has NOT won yet.
 	 */
 	public boolean hasWon() {
-		if (this.getActualScore() < MINIMUM_WIN_SCORE) {
-			return false;
-		}
+//		if (this.getActualScore() < MINIMUM_WIN_SCORE) {
+//			return false;
+//		}
 
 		for (int row = 0; row < this.getSize(); row++) {
 			for (int col = 0; col < this.getSize(); col++) {
