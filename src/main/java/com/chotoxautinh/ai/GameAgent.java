@@ -13,10 +13,19 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	public void build(Board board) throws CloneNotSupportedException {
+	public Direction process(Board board) throws CloneNotSupportedException {
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		return treeRoot.getDirection();
+	}
+	
+	public int getDepth(){
+		return this.depth;
 	}
 
+	public void setDepth(int depth){
+		this.depth = depth;
+	}
+	
 	private Node alphaBeta(Board board, int depth, boolean playerTurn, int alpha, int beta) throws CloneNotSupportedException {
 		Node node = new Node();
 		Direction bestDirection = Direction.NONE; // NONE = computer's turn
@@ -106,10 +115,6 @@ public class GameAgent {
 		}
 	}
 
-	public Direction getDirection() {
-		return treeRoot.getDirection();
-	}
-	
 	public Node getTreeRoot() {
 		return treeRoot;
 	}

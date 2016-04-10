@@ -25,10 +25,7 @@ public class GameController {
 
 	public void initialize() {
 		setBoard(new Board(4));
-		gameUI.toggleUndoBtn(false);
-		gameUI.setScore(0);
-		gameUI.setBoard(board);
-		gameUI.displayBoardPanel();
+		gameUI.postGameControllerInit();
 	}
 
 	public int getDepth() {
@@ -57,6 +54,7 @@ public class GameController {
 
 	public void setBoard(Board board) {
 		this.board = board;
+		gameUI.setBoard(board);
 	}
 
 	public GameUI getGameUI() {
@@ -67,35 +65,38 @@ public class GameController {
 		this.gameUI = gameUI;
 	}
 
-	public void toggleUndoBtn(boolean enabled) {
-		if (enabled) {
-			try {
-				setOldBoard((Board) board.clone());
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		} else {
-			setBoard(oldBoard);
-			gameUI.setBoard(oldBoard);
-			gameUI.setScore(oldBoard.getActualScore());
+	public void toggleBtn(boolean enabled) {
+		gameUI.toggleBtn(enabled);
+	}
+
+	private void saveHistory() {
+		try {
+			setOldBoard((Board) board.clone());
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
 		}
-		gameUI.toggleUndoBtn(enabled);
+	}
+
+	public void backToPrevious() {
+		setBoard(oldBoard);
+		gameUI.toggleBtn(false);
 	}
 
 	public void move(Direction direction) throws CloneNotSupportedException {
 		if (board.canMove(direction)) {
-			toggleUndoBtn(true);
+			saveHistory();
 			board.move(direction);
 			gameUI.setScore(board.getActualScore());
 			if (board.hasWon()) {
-				gameUI.displayWinLayout();
+				gameUI.displayWinResult();
 				return;
 			}
 			board.addRandomCell();
 			if (board.isTerminated()) {
-				gameUI.displayLosePanel(board.getActualScore());
+				gameUI.displayLoseResult();
 				return;
 			}
+			toggleBtn(true);
 		}
 	}
 

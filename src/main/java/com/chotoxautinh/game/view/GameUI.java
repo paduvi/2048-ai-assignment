@@ -83,6 +83,11 @@ public class GameUI extends JPanel {
 		gameController = new GameController(this);
 	}
 
+	public void postGameControllerInit() {
+		displayBoardPanel();
+		toggleBtn(false);
+	}
+
 	private void setKeyBindings() {
 		ActionMap actionMap = getActionMap();
 		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
@@ -132,8 +137,6 @@ public class GameUI extends JPanel {
 
 		ImagePanel losePanel = new ImagePanel(getClass().getResource("/tiles/game-over.gif"));
 		gamePanel.add(losePanel, LOSE);
-
-		displayGameLayout(INGAME);
 	}
 
 	public void displayGameLayout(String name) {
@@ -267,30 +270,32 @@ public class GameUI extends JPanel {
 
 	public void setBoard(Board board) {
 		boardPanel.setBoard(board);
+		setScore(board.getActualScore());
 	}
 
-	public void displayBoardPanel() {
+	private void displayBoardPanel() {
 		displayGameLayout(INGAME);
 		mainApp.setIngame(true);
 	}
 
-	public void displayLosePanel(int score) {
-		JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!", "GAME OVER! Your score is: " + score,
+	public void displayLoseResult() {
+		JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!",
+				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
 				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
 		displayGameLayout(LOSE);
 		mainApp.setIngame(false);
 	}
 
-	public void displayWinLayout() {
+	public void displayWinResult() {
 		displayGameLayout(WIN);
 		mainApp.setIngame(false);
 	}
 
-	public void toggleUndoBtn(boolean enabled) {
+	public void toggleBtn(boolean enabled) {
 		btnUndo.setEnabled(enabled);
 	}
 
-	private ActionListener undoHandler = o -> gameController.toggleUndoBtn(false);
+	private ActionListener undoHandler = o -> gameController.toggleBtn(false);
 
 	private ActionListener newGameHandler = o -> {
 		if (mainApp.isIngame()) {

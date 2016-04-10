@@ -7,7 +7,7 @@ import java.util.Random;
 public class Board implements Cloneable {
 
 	public static final int TARGET_POINTS = 2048;
-//	public static final int MINIMUM_WIN_SCORE = 0;
+	public static final int MINIMUM_WIN_SCORE = TARGET_POINTS * 10;
 	private final Random randomGenerator = new Random();
 
 	private int[][] cells;
@@ -21,13 +21,13 @@ public class Board implements Cloneable {
 		this.cells = new int[size][size];
 		initialize();
 	}
-	
+
 	public Board(Board board) {
 		this.setSize(board.getSize());
 		this.cells = new int[board.getSize()][board.getSize()];
 		this.numberOfEmptyCells = board.getNumberOfEmptyCells();
 		this.actualScore = board.actualScore;
-		
+
 		for (int row = 0; row < size; row++)
 			for (int col = 0; col < size; col++)
 				cells[row][col] = board.cells[row][col];
@@ -181,7 +181,7 @@ public class Board implements Cloneable {
 					// merge with matching value
 					this.cells[row][previousPosition] *= 2;
 					this.cells[row][col] = 0;
-					setMergingPoints(this.cells[row][previousPosition]);
+					setMergingPoints(getMergingPoints() + this.cells[row][previousPosition]);
 					numberOfEmptyCells++;
 					lastMergePosition = previousPosition + 1;
 				} else if (this.cells[row][previousPosition] != this.cells[row][col] && (previousPosition + 1 != col)) {
@@ -231,11 +231,12 @@ public class Board implements Cloneable {
 			throw new IndexOutOfBoundsException("Invalid cell!");
 		}
 	}
-	
+
 	// this method is created by Khang
-	public void setValueToCell(int value, int row, int col) throws Exception{
+	public void setValueToCell(int value, int row, int col) throws Exception {
 		if ((row < this.getSize()) && (col < this.getSize())) {
-			if (cells[row][col] == 0) this.setNumberOfEmptyCells(this.getNumberOfEmptyCells() - 1);
+			if (cells[row][col] == 0)
+				this.setNumberOfEmptyCells(this.getNumberOfEmptyCells() - 1);
 			cells[row][col] = value;
 		} else {
 			throw new Exception("Invalid cell!");
@@ -265,14 +266,14 @@ public class Board implements Cloneable {
 	}
 
 	/**
-	 * Player wins the game iff there is a cell whose value is greater than
-	 * TARGET_POINT If player's actual score is not greater than
+	 * Player wins the game if there is a cell whose value is greater than
+	 * TARGET_POINT. If player's actual score is not greater than
 	 * MINIMUM_WIN_SCORE, he (definitely) has NOT won yet.
 	 */
 	public boolean hasWon() {
-//		if (this.getActualScore() < MINIMUM_WIN_SCORE) {
-//			return false;
-//		}
+		if (this.getActualScore() < MINIMUM_WIN_SCORE) {
+			return false;
+		}
 
 		for (int row = 0; row < this.getSize(); row++) {
 			for (int col = 0; col < this.getSize(); col++) {
@@ -348,8 +349,8 @@ public class Board implements Cloneable {
 	public int[][] getCells() {
 		return this.cells;
 	}
-	
-	public void setCells(int[][] cells){
+
+	public void setCells(int[][] cells) {
 		this.cells = cells;
 	}
 
