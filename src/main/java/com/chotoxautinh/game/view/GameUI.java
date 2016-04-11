@@ -306,13 +306,11 @@ public class GameUI extends JPanel {
 	public void receiveHint(Direction direction) {
 		if (direction == Direction.NONE) {
 			hintLbl.setText("Cannot calculate");
-			if (auto)
-				toggleAutoBtn(false);
 		} else {
 			hintLbl.setText(direction.getDescription());
-			if (auto)
-				move(direction);
 		}
+		if (auto)
+			move(direction);
 		hintDirection = direction;
 		progressBar.setIndeterminate(false);
 		progressBar.setValue(0);
@@ -363,12 +361,15 @@ public class GameUI extends JPanel {
 
 	private ActionListener refreshHandler = o -> {
 		gameController.setDepth();
-		gameController.getHint();
+		if (!auto)
+			gameController.getHint();
 	};
 
 	private void move(Direction direction) {
 		try {
 			if (mainApp.isIngame()) {
+				if (direction == Direction.NONE && auto)
+					toggleAutoBtn(false);
 				if (gameController.getBoard().canMove(direction)) {
 					hintDirection = null;
 					gameController.move(direction);
