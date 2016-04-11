@@ -188,7 +188,7 @@ public class GameUI extends JPanel {
 		controlPanel.add(label1);
 
 		hintLbl = new JLabel("Loading...");
-		hintLbl.setBounds(83, 70, 89, 14);
+		hintLbl.setBounds(69, 70, 103, 14);
 		controlPanel.add(hintLbl);
 
 		progressBar = new JProgressBar();
@@ -305,7 +305,7 @@ public class GameUI extends JPanel {
 
 	public void receiveHint(Direction direction) {
 		if (direction == Direction.NONE) {
-			hintLbl.setText("Cannot calculate hint");
+			hintLbl.setText("Cannot calculate");
 			if (auto)
 				toggleAutoBtn(false);
 		} else {

@@ -143,8 +143,10 @@ public class GameController {
 			try {
 				handleHint(get());
 			} catch (InterruptedException e) {
+				handleHint(Direction.NONE);
 				e.printStackTrace();
 			} catch (ExecutionException e) {
+				handleHint(Direction.NONE);
 				e.printStackTrace();
 			}
 		}
