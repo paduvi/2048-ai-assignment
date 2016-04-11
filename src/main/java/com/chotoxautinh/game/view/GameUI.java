@@ -60,10 +60,14 @@ public class GameUI extends JPanel {
 	private BoardPanel boardPanel;
 
 	private JButton btnUndo;
+	private JButton btnAuto;
 	private JLabel scoreLbl;
 	private JLabel hintLbl;
 	private JProgressBar progressBar;
 	private ButtonGroup btnGroup = new ButtonGroup();
+
+	private boolean auto = false;
+	private Direction hintDirection;
 
 	/**
 	 * Create the panel.
@@ -172,9 +176,10 @@ public class GameUI extends JPanel {
 		btnUndo.addActionListener(undoHandler);
 		controlPanel.add(btnUndo);
 
-		JButton btnAuto = new JButton("Auto");
+		btnAuto = new JButton("Auto");
 		btnAuto.setBounds(102, 36, 70, 23);
 		btnAuto.setFocusable(false);
+		btnAuto.addActionListener(autoHandler);
 		btnAuto.setBackground(SystemColor.info);
 		controlPanel.add(btnAuto);
 
@@ -299,12 +304,22 @@ public class GameUI extends JPanel {
 	}
 
 	public void receiveHint(Direction direction) {
-		if (direction == Direction.NONE)
+		if (direction == Direction.NONE) {
 			hintLbl.setText("Cannot calculate hint");
-		else
+			if (auto)
+				toggleAutoBtn(false);
+		} else {
 			hintLbl.setText(direction.getDescription());
+			if (auto)
+				move(direction);
+		}
+		hintDirection = direction;
 		progressBar.setIndeterminate(false);
 		progressBar.setValue(0);
+	}
+
+	public boolean isAuto() {
+		return auto;
 	}
 
 	private ActionListener undoHandler = o -> {
@@ -326,10 +341,45 @@ public class GameUI extends JPanel {
 		}
 	};
 
+	private ActionListener autoHandler = o -> {
+		if (auto) {
+			toggleAutoBtn(!auto);
+		} else {
+			toggleAutoBtn(!auto);
+			if (hintDirection != null)
+				move(hintDirection);
+		}
+	};
+
+	private void toggleAutoBtn(boolean enabled) {
+		if (!enabled) {
+			btnAuto.setBackground(SystemColor.info);
+			auto = false;
+		} else {
+			btnAuto.setBackground(Color.GREEN);
+			auto = true;
+		}
+	}
+
 	private ActionListener refreshHandler = o -> {
 		gameController.setDepth();
 		gameController.getHint();
 	};
+
+	private void move(Direction direction) {
+		try {
+			if (mainApp.isIngame()) {
+				if (gameController.getBoard().canMove(direction)) {
+					hintDirection = null;
+					gameController.move(direction);
+					hintLbl.setText("Loading...");
+					progressBar.setIndeterminate(true);
+				}
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private class MoveAction extends AbstractAction {
 		private static final long serialVersionUID = 3334610052515363537L;
@@ -341,15 +391,7 @@ public class GameUI extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
-			try {
-				if (mainApp.isIngame()) {
-					gameController.move(direction);
-					hintLbl.setText("Loading...");
-					progressBar.setIndeterminate(true);
-				}
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+			move(direction);
 		}
 	}
 
