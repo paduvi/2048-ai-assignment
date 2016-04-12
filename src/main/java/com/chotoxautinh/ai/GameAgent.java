@@ -34,8 +34,10 @@ public class GameAgent {
 		if (board.isTerminated()) {
 			if (board.hasWon())
 				node.setValue(Integer.MAX_VALUE);
-			else
-				node.setValue(Math.min(board.getActualScore(), 1));
+			else {
+				node.setValue(Math.min(board.getActualScore(), 0));
+				node.setLeaf(true);
+			}
 		} else if (depth == 0) {
 			setHeuristicScore(node, board);
 			node.setLeaf(true);
@@ -45,14 +47,17 @@ public class GameAgent {
 				for (int i = 1; i < Direction.values().length; i++) {
 					Board boardOfChild = (Board) board.clone();
 					// boardOfChild = board;
-					System.out.println("Original board: ");
-					boardOfChild.display();
+					//System.out.println("original board: ");
+					//boardOfChild.display();
 					System.out.println();
 					Node child = new Node();
 					if (boardOfChild.canMove(Direction.values()[i])) {
-						//System.out.println("After move " + i);
 						boardOfChild.move(Direction.values()[i]);
+						//System.out.println("Board after move: " + i);
 						//boardOfChild.display();
+						//System.out.println("Actual Score " + boardOfChild.getActualScore());
+						//System.out.println("Number of Empty Cells " + boardOfChild.getNumberOfEmptyCells());
+						//System.out.println("Clustering Score " + boardOfChild.getClusteringScore());
 						child = alphaBeta(boardOfChild, depth - 1, false, alpha, beta);
 						alpha = Math.max(alpha, child.getValue());
 						child.setValueDirOfChild(Direction.values()[i]);
@@ -72,6 +77,9 @@ public class GameAgent {
 					for (int valueOfCell : newvalue) {
 						try {
 							boardOfChild.setValueToCell(valueOfCell, row, col);
+							//System.out.println();
+							//boardOfChild.move(Direction.values()[i]);
+							//boardOfChild.display();
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
