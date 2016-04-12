@@ -10,6 +10,7 @@ public class Node {
 	private boolean leaf = false;
 	private Direction direction;
 	private Direction valueDirOfChild;
+	private int actualScore;
 	
 	public Node() {
 		children = new ArrayList<Node>();
@@ -52,6 +53,14 @@ public class Node {
 	
 	public Direction getValueDirOfChild() {
 		return this.valueDirOfChild;
+	}
+	
+	public void setActualScore(int score) {
+		this.actualScore = score;
+	}
+	
+	public int getActualScore() {
+		return actualScore;
 	}
 
 }
