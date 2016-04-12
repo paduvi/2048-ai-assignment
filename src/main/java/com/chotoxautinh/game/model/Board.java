@@ -321,6 +321,8 @@ public class Board implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		Board clone = (Board) super.clone();
 		clone.cells = clone2dArray(this.cells);
+		//clone.actualScore = this.getActualScore();
+		//clone.setNumberOfEmptyCells(this.getNumberOfEmptyCells());
 		return clone;
 	}
 
