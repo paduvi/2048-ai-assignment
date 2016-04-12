@@ -10,7 +10,7 @@ public class GameAgent {
 	private int depth;
 
 	public GameAgent(int depth) {
-		this.depth = depth;
+		this.setDepth(depth);
 	}
 
 	public Direction process(Board board) throws CloneNotSupportedException {
@@ -27,7 +27,7 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	private Node alphaBeta(Board board, int depth, boolean playerTurn, int alpha, int beta)
+	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta)
 			throws CloneNotSupportedException {
 		Node node = new Node();
 		Direction bestDirection = Direction.NONE; // NONE = computer's turn
@@ -41,7 +41,7 @@ public class GameAgent {
 			node.setLeaf(true);
 		} else {
 			// alpha-beta pruning
-			if (playerTurn) {
+			if (isPlayerTurn) {
 				for (int i = 1; i < Direction.values().length; i++) {
 					Board boardOfChild = (Board) board.clone();
 					// boardOfChild = board;
@@ -91,7 +91,7 @@ public class GameAgent {
 		}
 
 		// find bestDirection of Player
-		if (playerTurn && !node.isLeaf()) {
+		if (isPlayerTurn && !node.isLeaf()) {
 			int maxHeuristic = node.getChildren().get(0).getValue();
 			bestDirection = node.getChildren().get(0).getValueDirOfChild();
 			for (int i = 0; i < node.getChildren().size(); i++) {
