@@ -41,7 +41,7 @@ public class GameController {
 
 	public void setDepth() {
 		Enumeration<AbstractButton> list = gameUI.getBtnGroup().getElements();
-		int index = 7;
+		int index = 2;
 		while (list.hasMoreElements()) {
 			AbstractButton btn = list.nextElement();
 			index++;
@@ -50,6 +50,7 @@ public class GameController {
 			}
 		}
 		gameAgent.setDepth(depth);
+		System.out.println(depth);
 	}
 
 	private void setDepth(int depth) {
