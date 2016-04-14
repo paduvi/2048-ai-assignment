@@ -5,8 +5,6 @@
  */
 package com.chotoxautinh.testunit;
 
-import java.util.Date;
-
 public class LogarithTest {
 
 	public static int log2(int number) {
