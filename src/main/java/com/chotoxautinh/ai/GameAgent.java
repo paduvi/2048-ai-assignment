@@ -93,21 +93,30 @@ public class GameAgent {
 		if (isPlayerTurn && !node.isLeaf()) {
 			int maxHeuristic = node.getChildren().get(0).getValue();
 			bestDirection = node.getChildren().get(0).getValueDirOfChild();
-			int maxActualScore = node.getChildren().get(0).getActualScore();
+			//int maxActualScore = node.getChildren().get(0).getActualScore();
 			for (int i = 0; i < node.getChildren().size(); i++) {
 				Node child = new Node();
 				child = node.getChildren().get(i);
 				if (child.getValue() > maxHeuristic) {
 					maxHeuristic = child.getValue();
 					bestDirection = child.getValueDirOfChild();
+<<<<<<< HEAD
 					maxActualScore = child.getActualScore();
 				} else if (child.getValue() == maxHeuristic) {
 					// All children whose maxheuristic are the same,
 					// choose the child with maximum ActualScore
+=======
+					//maxActualScore = child.getActualScore();
+				}
+				// Try with this
+				/*else if (child.getValue() == maxHeuristic) {
+					// In all child who have maxheuristic equal each other,
+					// choose child have ActualScore is maximum
+>>>>>>> f1f05b0ffdc17141dcd3d3bc2feb61cef6e118d4
 					if (child.getActualScore() > maxActualScore) {
 						bestDirection = child.getValueDirOfChild();
 					}
-				}
+				}*/
 			}
 		}
 		return bestDirection;

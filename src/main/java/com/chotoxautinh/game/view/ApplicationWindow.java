@@ -41,7 +41,7 @@ public class ApplicationWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent we) {
-				Object objButtons[] = { "Yes... Byte Byte", "No" };
+				Object objButtons[] = { "Sure... Byte Byte", "No" };
 				int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Are you sure you want to exit?",
 						"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 						new ImageIcon(Application.class.getResource("/stuff/9_50x50.png")), objButtons, objButtons[1]);

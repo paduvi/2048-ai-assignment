@@ -89,6 +89,7 @@ public class GameUI extends JPanel {
 
 	public void postGameControllerInit() {
 		displayBoardPanel();
+		loading();
 		btnUndo.setEnabled(false);
 	}
 
@@ -192,42 +193,38 @@ public class GameUI extends JPanel {
 		controlPanel.add(hintLbl);
 
 		progressBar = new JProgressBar();
-		progressBar.setBounds(20, 101, 152, 8);
+		progressBar.setBounds(20, 101, 152, 14);
 		controlPanel.add(progressBar);
 
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 141, 197, 2);
+		separator.setBounds(0, 158, 197, 2);
 		controlPanel.add(separator);
 
 		JLabel lblResolverLevel = new JLabel("Resolver Level:");
-		lblResolverLevel.setBounds(20, 154, 152, 14);
+		lblResolverLevel.setBounds(20, 171, 152, 14);
 		controlPanel.add(lblResolverLevel);
 
 		JRadioButton rdbtnLow = new JRadioButton("Low");
-		rdbtnLow.setBounds(20, 175, 109, 23);
+		rdbtnLow.setBounds(20, 192, 109, 23);
 		rdbtnLow.setFocusable(false);
 		rdbtnLow.setSelected(true);
+		rdbtnLow.addActionListener(changeListener);
 		controlPanel.add(rdbtnLow);
 		btnGroup.add(rdbtnLow);
 
 		JRadioButton rdbtnMedium = new JRadioButton("Medium");
-		rdbtnMedium.setBounds(20, 201, 109, 23);
+		rdbtnMedium.setBounds(20, 218, 109, 23);
 		rdbtnMedium.setFocusable(false);
+		rdbtnMedium.addActionListener(changeListener);
 		controlPanel.add(rdbtnMedium);
 		btnGroup.add(rdbtnMedium);
 
 		JRadioButton rdbtnHigh = new JRadioButton("High");
-		rdbtnHigh.setBounds(20, 227, 109, 23);
+		rdbtnHigh.setBounds(20, 244, 109, 23);
 		rdbtnHigh.setFocusable(false);
+		rdbtnHigh.addActionListener(changeListener);
 		controlPanel.add(rdbtnHigh);
 		btnGroup.add(rdbtnHigh);
-
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.setBounds(56, 257, 89, 23);
-		btnRefresh.setFocusable(false);
-		btnRefresh.setBackground(SystemColor.inactiveCaption);
-		btnRefresh.addActionListener(refreshHandler);
-		controlPanel.add(btnRefresh);
 
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(0, 303, 197, 2);
@@ -289,14 +286,20 @@ public class GameUI extends JPanel {
 				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
 				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
 		displayGameLayout(LOSE);
-		btnUndo.setEnabled(false);
-		mainApp.setIngame(false);
+		endGame();
 	}
 
 	public void displayWinResult() {
 		displayGameLayout(WIN);
+		endGame();
+	}
+
+	private void endGame() {
 		btnUndo.setEnabled(false);
 		mainApp.setIngame(false);
+		hintLbl.setText("");
+		progressBar.setIndeterminate(false);
+		progressBar.setValue(0);
 	}
 
 	public void receiveMoveResponse() {
@@ -309,11 +312,11 @@ public class GameUI extends JPanel {
 		} else {
 			hintLbl.setText(direction.getDescription());
 		}
-		if (auto)
-			move(direction);
 		hintDirection = direction;
 		progressBar.setIndeterminate(false);
 		progressBar.setValue(0);
+		if (auto)
+			move(direction);
 	}
 
 	public boolean isAuto() {
@@ -359,11 +362,19 @@ public class GameUI extends JPanel {
 		}
 	}
 
-	private ActionListener refreshHandler = o -> {
+	private ActionListener changeListener = o -> {
 		gameController.setDepth();
-		if (!auto)
+		if (!auto) {
+			loading();
 			gameController.getHint();
+		}
 	};
+
+	private void loading() {
+		hintDirection = null;
+		hintLbl.setText("Loading...");
+		progressBar.setIndeterminate(true);
+	}
 
 	private void move(Direction direction) {
 		try {
@@ -371,10 +382,8 @@ public class GameUI extends JPanel {
 				if (direction == Direction.NONE && auto)
 					toggleAutoBtn(false);
 				if (gameController.getBoard().canMove(direction)) {
-					hintDirection = null;
+					loading();
 					gameController.move(direction);
-					hintLbl.setText("Loading...");
-					progressBar.setIndeterminate(true);
 				}
 			}
 		} catch (CloneNotSupportedException e) {
@@ -392,6 +401,8 @@ public class GameUI extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
+			if (auto)
+				return;
 			move(direction);
 		}
 	}
