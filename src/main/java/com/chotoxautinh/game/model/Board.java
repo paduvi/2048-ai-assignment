@@ -1,3 +1,7 @@
+/**
+ * @author aaronhung22
+ */
+
 package com.chotoxautinh.game.model;
 
 import java.util.ArrayList;
