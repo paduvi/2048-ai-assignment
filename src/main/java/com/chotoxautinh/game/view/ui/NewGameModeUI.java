@@ -3,7 +3,7 @@
  *
  * Apr 8, 2016 - http://chotoxautinh.com/
  */
-package com.chotoxautinh.game.view;
+package com.chotoxautinh.game.view.ui;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -15,8 +15,10 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -34,16 +36,13 @@ import javax.swing.border.LineBorder;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.controller.GameController;
-import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
+import com.chotoxautinh.game.view.component.BoardPanel;
+import com.chotoxautinh.game.view.component.ImagePanel;
 
-public class GameUI extends JPanel {
+public class NewGameModeUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
-	public static final int LOW = 1;
-	public static final int MEDIUM = 2;
-	public static final int HIGH = 3;
 
 	public static final String WIN = "win";
 	public static final String LOSE = "lose";
@@ -72,22 +71,28 @@ public class GameUI extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public GameUI(Application mainApp) {
+	public NewGameModeUI(Application mainApp) {
 		this.setMainApp(mainApp);
+		initLayout();
 		initialize();
 
 		setKeyBindings();
 	}
 
-	private void initialize() {
+	private void initLayout() {
 		setLayout();
 		createControlPanel();
 		createGamePanel();
-
-		gameController = new GameController(this);
 	}
 
-	public void postGameControllerInit() {
+	public void initialize() {
+		gameController = new GameController(this);
+		postGameControllerInit();
+	}
+
+	private void postGameControllerInit() {
+		boardPanel.setBoard(gameController.getBoard());
+		setScore(0);
 		displayBoardPanel();
 		loading();
 		btnUndo.setEnabled(false);
@@ -259,21 +264,26 @@ public class GameUI extends JPanel {
 		return gameController;
 	}
 
+	public int getDepth() {
+		Enumeration<AbstractButton> list = btnGroup.getElements();
+		int start = 4;
+		int index = 0;
+		while (list.hasMoreElements()) {
+			AbstractButton btn = list.nextElement();
+			index++;
+			if (btn.isSelected()) {
+				break;
+			}
+		}
+		return start + index * 2;
+	}
+
 	public void setGameController(GameController gameController) {
 		this.gameController = gameController;
 	}
 
-	public ButtonGroup getBtnGroup() {
-		return btnGroup;
-	}
-
 	public void setScore(int score) {
 		scoreLbl.setText(String.valueOf(score));
-	}
-
-	public void setBoard(Board board) {
-		boardPanel.setBoard(board);
-		setScore(board.getActualScore());
 	}
 
 	private void displayBoardPanel() {
@@ -303,7 +313,8 @@ public class GameUI extends JPanel {
 	}
 
 	public void receiveMoveResponse() {
-		btnUndo.setEnabled(true);
+		if (!auto)
+			btnUndo.setEnabled(true);
 	}
 
 	public void receiveHint(Direction direction) {
@@ -313,10 +324,12 @@ public class GameUI extends JPanel {
 			hintLbl.setText(direction.getDescription());
 		}
 		hintDirection = direction;
-		progressBar.setIndeterminate(false);
-		progressBar.setValue(0);
-		if (auto)
+		if (!auto) {
+			progressBar.setIndeterminate(false);
+			progressBar.setValue(0);
+		} else {
 			move(direction);
+		}
 	}
 
 	public boolean isAuto() {
@@ -324,8 +337,12 @@ public class GameUI extends JPanel {
 	}
 
 	private ActionListener undoHandler = o -> {
-		gameController.setBoard(gameController.getOldBoard());
-		btnUndo.setEnabled(false);
+		if (mainApp.isIngame()) {
+			gameController.setBoard(gameController.getOldBoard());
+			boardPanel.setBoard(gameController.getBoard());
+			setScore(gameController.getBoard().getActualScore());
+			btnUndo.setEnabled(false);
+		}
 	};
 
 	private ActionListener newGameHandler = o -> {
@@ -335,20 +352,21 @@ public class GameUI extends JPanel {
 					"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 					new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
 			if (promptResult == JOptionPane.YES_OPTION) {
-				gameController.initialize();
+				initialize();
 			}
 		} else {
-			gameController.initialize();
+			initialize();
 		}
 	};
 
 	private ActionListener autoHandler = o -> {
+		toggleAutoBtn(!auto);
 		if (auto) {
-			toggleAutoBtn(!auto);
-		} else {
-			toggleAutoBtn(!auto);
+			btnUndo.setEnabled(false);
 			if (hintDirection != null)
 				move(hintDirection);
+		} else if (gameController.getOldBoard() != null) {
+			btnUndo.setEnabled(true);
 		}
 	};
 

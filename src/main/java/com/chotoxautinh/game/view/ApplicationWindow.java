@@ -17,6 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.view.ui.MainMenu;
+import com.chotoxautinh.game.view.ui.MenuBar;
 
 public class ApplicationWindow extends JFrame {
 
@@ -94,6 +96,7 @@ public class ApplicationWindow extends JFrame {
 			if (promptResult == JOptionPane.NO_OPTION) {
 				return;
 			}
+			mainApp.setIngame(false);
 		}
 		Component[] components = mainApp.getFrame().getContentPane().getComponents();
 		for (Component component : components) {

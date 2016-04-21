@@ -15,7 +15,7 @@ public class GameAgent {
 	}
 
 	public Direction process(Board board) throws Exception {
-		System.out.println(depth);
+		System.out.println("Depth Agent: " + depth);
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		return treeRoot.getDirection();
 	}
@@ -28,10 +28,9 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta)
-			throws Exception {
+	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta) throws Exception {
 		Node node = new Node();
-		
+
 		if (board.isTerminated()) {
 			if (board.hasWon())
 				node.setValue(Integer.MAX_VALUE);
@@ -55,7 +54,8 @@ public class GameAgent {
 						childNode.setValueDirOfChild(Direction.values()[i]);
 						childNode.setActualScore(boardOfChildNode.getActualScore());
 						node.appendChild(childNode);
-						if (beta <= alpha) break;
+						if (beta <= alpha)
+							break;
 					}
 				}
 				node.setValue(alpha);
@@ -63,62 +63,64 @@ public class GameAgent {
 				int[] newvalue = { 2, 4 };
 				for (int emptyCellPos = 0; emptyCellPos < board.getNumberOfEmptyCells(); emptyCellPos++) {
 					Board boardOfChild = (Board) board.clone();
-					
+
 					int row = board.getEmptyCellIds().get(emptyCellPos) / 4;
 					int col = board.getEmptyCellIds().get(emptyCellPos) % 4;
-					
+
 					for (int valueOfCell : newvalue) {
 						boardOfChild.setValueToCell(valueOfCell, row, col);
 						Node child = new Node();
 						child = alphaBeta(boardOfChild, depth - 1, true, alpha, beta);
 						beta = Math.min(beta, child.getValue());
 						node.appendChild(child);
-						if (beta <= alpha) break;
+						if (beta <= alpha)
+							break;
 					}
-					if (beta <= alpha) break;
+					if (beta <= alpha)
+						break;
 				}
 				node.setValue(beta);
 			}
 		}
-		
+
 		Direction bestDirection = this.findBestDirectionForPlayer(isPlayerTurn, node);
 		node.setDirection(bestDirection);
-		
+
 		return node;
 	}
-	
-	private Direction findBestDirectionForPlayer(boolean isPlayerTurn, Node node){
+
+	private Direction findBestDirectionForPlayer(boolean isPlayerTurn, Node node) {
 		Direction bestDirection = Direction.NONE;
 		// Direction.NONE means it is the computer's turn
 		if (isPlayerTurn && !node.isLeaf()) {
 			int maxHeuristic = node.getChildren().get(0).getValue();
 			bestDirection = node.getChildren().get(0).getValueDirOfChild();
-			//int maxActualScore = node.getChildren().get(0).getActualScore();
+			// int maxActualScore = node.getChildren().get(0).getActualScore();
 			for (int i = 0; i < node.getChildren().size(); i++) {
 				Node child = new Node();
 				child = node.getChildren().get(i);
 				if (child.getValue() > maxHeuristic) {
 					maxHeuristic = child.getValue();
 					bestDirection = child.getValueDirOfChild();
-					//maxActualScore = child.getActualScore();
+					// maxActualScore = child.getActualScore();
 				} else if (child.getValue() == maxHeuristic) {
 					// All children whose maxheuristic are the same,
 					// choose the child with maximum ActualScore
-					//maxActualScore = child.getActualScore();
+					// maxActualScore = child.getActualScore();
 				}
 				// Try with this
-				/*else if (child.getValue() == maxHeuristic) {
-					// In all child who have maxheuristic equal each other,
-					// choose child have ActualScore is maximum
-					if (child.getActualScore() > maxActualScore) {
-						bestDirection = child.getValueDirOfChild();
-					}
-				}*/
+				/*
+				 * else if (child.getValue() == maxHeuristic) { // In all child
+				 * who have maxheuristic equal each other, // choose child have
+				 * ActualScore is maximum if (child.getActualScore() >
+				 * maxActualScore) { bestDirection = child.getValueDirOfChild();
+				 * } }
+				 */
 			}
 		}
 		return bestDirection;
 	}
-	
+
 	private void setHeuristicScore(Node node, Board board) {
 		int heuristicScore = 0;
 		// if ActualScore = 0 then heuristic will lead to a math error

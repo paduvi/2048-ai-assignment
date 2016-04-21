@@ -3,7 +3,7 @@
  *
  * Apr 7, 2016 - http://chotoxautinh.com/
  */
-package com.chotoxautinh.game.view;
+package com.chotoxautinh.game.view.ui;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -72,12 +72,18 @@ public class MainMenu extends JPanel {
 		mainMn.setLayout(new GridLayout(0, 1, 0, 30));
 
 		addBtn("New Game", NEW_GAME_ICON, newGameHandler);
-		addBtn("Simulation", SIMULATION_ICON, null);
+		addBtn("Simulation", SIMULATION_ICON, simulationHandler);
 		addBtn("High Score", HIGH_SCORE_ICON, null);
 	}
 
 	private ActionListener newGameHandler = o -> {
-		GameUI gameUI = new GameUI(mainApp);
+		NewGameModeUI gameUI = new NewGameModeUI(mainApp);
+		mainApp.getFrame().getContentPane().add(gameUI, "content");
+		mainApp.getFrame().getLayout().show(mainApp.getFrame().getContentPane(), "content");
+	};
+	
+	private ActionListener simulationHandler = o->{
+		SimulationModeUI gameUI = new SimulationModeUI(mainApp);
 		mainApp.getFrame().getContentPane().add(gameUI, "content");
 		mainApp.getFrame().getLayout().show(mainApp.getFrame().getContentPane(), "content");
 	};
