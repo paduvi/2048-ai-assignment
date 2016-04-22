@@ -3,7 +3,7 @@
  *
  * Apr 8, 2016 - http://chotoxautinh.com/
  */
-package com.chotoxautinh.game.view;
+package com.chotoxautinh.game.view.ui;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -15,8 +15,10 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -34,16 +36,13 @@ import javax.swing.border.LineBorder;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.controller.GameController;
-import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
+import com.chotoxautinh.game.view.component.BoardPanel;
+import com.chotoxautinh.game.view.component.ImagePanel;
 
-public class GameUI extends JPanel {
+public class NewGameModeUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
-	public static final int LOW = 1;
-	public static final int MEDIUM = 2;
-	public static final int HIGH = 3;
 
 	public static final String WIN = "win";
 	public static final String LOSE = "lose";
@@ -72,23 +71,30 @@ public class GameUI extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public GameUI(Application mainApp) {
+	public NewGameModeUI(Application mainApp) {
 		this.setMainApp(mainApp);
+		initLayout();
 		initialize();
 
 		setKeyBindings();
 	}
 
-	private void initialize() {
+	private void initLayout() {
 		setLayout();
 		createControlPanel();
 		createGamePanel();
-
-		gameController = new GameController(this);
 	}
 
-	public void postGameControllerInit() {
+	public void initialize() {
+		gameController = new GameController(this);
+		postGameControllerInit();
+	}
+
+	private void postGameControllerInit() {
+		boardPanel.setBoard(gameController.getBoard());
+		setScore(0);
 		displayBoardPanel();
+		loading();
 		btnUndo.setEnabled(false);
 	}
 
@@ -192,42 +198,38 @@ public class GameUI extends JPanel {
 		controlPanel.add(hintLbl);
 
 		progressBar = new JProgressBar();
-		progressBar.setBounds(20, 101, 152, 8);
+		progressBar.setBounds(20, 101, 152, 14);
 		controlPanel.add(progressBar);
 
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 141, 197, 2);
+		separator.setBounds(0, 158, 197, 2);
 		controlPanel.add(separator);
 
 		JLabel lblResolverLevel = new JLabel("Resolver Level:");
-		lblResolverLevel.setBounds(20, 154, 152, 14);
+		lblResolverLevel.setBounds(20, 171, 152, 14);
 		controlPanel.add(lblResolverLevel);
 
 		JRadioButton rdbtnLow = new JRadioButton("Low");
-		rdbtnLow.setBounds(20, 175, 109, 23);
+		rdbtnLow.setBounds(20, 192, 109, 23);
 		rdbtnLow.setFocusable(false);
 		rdbtnLow.setSelected(true);
+		rdbtnLow.addActionListener(changeListener);
 		controlPanel.add(rdbtnLow);
 		btnGroup.add(rdbtnLow);
 
 		JRadioButton rdbtnMedium = new JRadioButton("Medium");
-		rdbtnMedium.setBounds(20, 201, 109, 23);
+		rdbtnMedium.setBounds(20, 218, 109, 23);
 		rdbtnMedium.setFocusable(false);
+		rdbtnMedium.addActionListener(changeListener);
 		controlPanel.add(rdbtnMedium);
 		btnGroup.add(rdbtnMedium);
 
 		JRadioButton rdbtnHigh = new JRadioButton("High");
-		rdbtnHigh.setBounds(20, 227, 109, 23);
+		rdbtnHigh.setBounds(20, 244, 109, 23);
 		rdbtnHigh.setFocusable(false);
+		rdbtnHigh.addActionListener(changeListener);
 		controlPanel.add(rdbtnHigh);
 		btnGroup.add(rdbtnHigh);
-
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.setBounds(56, 257, 89, 23);
-		btnRefresh.setFocusable(false);
-		btnRefresh.setBackground(SystemColor.inactiveCaption);
-		btnRefresh.addActionListener(refreshHandler);
-		controlPanel.add(btnRefresh);
 
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(0, 303, 197, 2);
@@ -262,21 +264,26 @@ public class GameUI extends JPanel {
 		return gameController;
 	}
 
+	public int getDepth() {
+		Enumeration<AbstractButton> list = btnGroup.getElements();
+		int start = 4;
+		int index = 0;
+		while (list.hasMoreElements()) {
+			AbstractButton btn = list.nextElement();
+			index++;
+			if (btn.isSelected()) {
+				break;
+			}
+		}
+		return start + index * 2;
+	}
+
 	public void setGameController(GameController gameController) {
 		this.gameController = gameController;
 	}
 
-	public ButtonGroup getBtnGroup() {
-		return btnGroup;
-	}
-
 	public void setScore(int score) {
 		scoreLbl.setText(String.valueOf(score));
-	}
-
-	public void setBoard(Board board) {
-		boardPanel.setBoard(board);
-		setScore(board.getActualScore());
 	}
 
 	private void displayBoardPanel() {
@@ -289,18 +296,25 @@ public class GameUI extends JPanel {
 				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
 				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
 		displayGameLayout(LOSE);
-		btnUndo.setEnabled(false);
-		mainApp.setIngame(false);
+		endGame();
 	}
 
 	public void displayWinResult() {
 		displayGameLayout(WIN);
+		endGame();
+	}
+
+	private void endGame() {
 		btnUndo.setEnabled(false);
 		mainApp.setIngame(false);
+		hintLbl.setText("");
+		progressBar.setIndeterminate(false);
+		progressBar.setValue(0);
 	}
 
 	public void receiveMoveResponse() {
-		btnUndo.setEnabled(true);
+		if (!auto)
+			btnUndo.setEnabled(true);
 	}
 
 	public void receiveHint(Direction direction) {
@@ -309,11 +323,13 @@ public class GameUI extends JPanel {
 		} else {
 			hintLbl.setText(direction.getDescription());
 		}
-		if (auto)
-			move(direction);
 		hintDirection = direction;
-		progressBar.setIndeterminate(false);
-		progressBar.setValue(0);
+		if (!auto) {
+			progressBar.setIndeterminate(false);
+			progressBar.setValue(0);
+		} else {
+			move(direction);
+		}
 	}
 
 	public boolean isAuto() {
@@ -321,8 +337,12 @@ public class GameUI extends JPanel {
 	}
 
 	private ActionListener undoHandler = o -> {
-		gameController.setBoard(gameController.getOldBoard());
-		btnUndo.setEnabled(false);
+		if (mainApp.isIngame()) {
+			gameController.setBoard(gameController.getOldBoard());
+			boardPanel.setBoard(gameController.getBoard());
+			setScore(gameController.getBoard().getActualScore());
+			btnUndo.setEnabled(false);
+		}
 	};
 
 	private ActionListener newGameHandler = o -> {
@@ -332,20 +352,21 @@ public class GameUI extends JPanel {
 					"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 					new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
 			if (promptResult == JOptionPane.YES_OPTION) {
-				gameController.initialize();
+				initialize();
 			}
 		} else {
-			gameController.initialize();
+			initialize();
 		}
 	};
 
 	private ActionListener autoHandler = o -> {
+		toggleAutoBtn(!auto);
 		if (auto) {
-			toggleAutoBtn(!auto);
-		} else {
-			toggleAutoBtn(!auto);
+			btnUndo.setEnabled(false);
 			if (hintDirection != null)
 				move(hintDirection);
+		} else if (gameController.getOldBoard() != null) {
+			btnUndo.setEnabled(true);
 		}
 	};
 
@@ -359,11 +380,19 @@ public class GameUI extends JPanel {
 		}
 	}
 
-	private ActionListener refreshHandler = o -> {
+	private ActionListener changeListener = o -> {
 		gameController.setDepth();
-		if (!auto)
+		if (!auto) {
+			loading();
 			gameController.getHint();
+		}
 	};
+
+	private void loading() {
+		hintDirection = null;
+		hintLbl.setText("Loading...");
+		progressBar.setIndeterminate(true);
+	}
 
 	private void move(Direction direction) {
 		try {
@@ -371,10 +400,8 @@ public class GameUI extends JPanel {
 				if (direction == Direction.NONE && auto)
 					toggleAutoBtn(false);
 				if (gameController.getBoard().canMove(direction)) {
-					hintDirection = null;
+					loading();
 					gameController.move(direction);
-					hintLbl.setText("Loading...");
-					progressBar.setIndeterminate(true);
 				}
 			}
 		} catch (CloneNotSupportedException e) {
@@ -392,6 +419,8 @@ public class GameUI extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent actionEvt) {
+			if (auto)
+				return;
 			move(direction);
 		}
 	}

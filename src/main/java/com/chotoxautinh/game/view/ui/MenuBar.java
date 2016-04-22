@@ -3,7 +3,7 @@
  *
  * Apr 7, 2016 - http://chotoxautinh.com/
  */
-package com.chotoxautinh.game.view;
+package com.chotoxautinh.game.view.ui;
 
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;

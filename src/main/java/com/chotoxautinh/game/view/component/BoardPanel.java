@@ -3,7 +3,7 @@
  *
  * Apr 9, 2016 - http://chotoxautinh.com/
  */
-package com.chotoxautinh.game.view;
+package com.chotoxautinh.game.view.component;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

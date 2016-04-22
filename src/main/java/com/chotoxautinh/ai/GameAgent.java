@@ -10,11 +10,12 @@ public class GameAgent {
 	private int depth;
 
 	public GameAgent(int depth) {
-		this.depth = depth;
+		this.setDepth(depth);
+		this.treeRoot = new Node();
 	}
 
-	public Direction process(Board board) throws CloneNotSupportedException {
-		System.out.println(depth);
+	public Direction process(Board board) throws Exception {
+		System.out.println("Depth Agent: " + depth);
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		return treeRoot.getDirection();
 	}
@@ -27,10 +28,9 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	private Node alphaBeta(Board board, int depth, boolean playerTurn, int alpha, int beta)
-			throws CloneNotSupportedException {
+	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta) throws Exception {
 		Node node = new Node();
-		Direction bestDirection = Direction.NONE; // NONE = computer's turn
+
 		if (board.isTerminated()) {
 			if (board.hasWon())
 				node.setValue(Integer.MAX_VALUE);
@@ -39,52 +39,36 @@ public class GameAgent {
 				node.setLeaf(true);
 			}
 		} else if (depth == 0) {
-			setHeuristicScore(node, board);
+			this.setHeuristicScore(node, board);
 			node.setLeaf(true);
 		} else {
 			// alpha-beta pruning
-			if (playerTurn) {
+			if (isPlayerTurn) {
 				for (int i = 1; i < Direction.values().length; i++) {
-					Board boardOfChild = (Board) board.clone();
-					// boardOfChild = board;
-					//System.out.println("original board: ");
-					//boardOfChild.display();
-					System.out.println();
-					Node child = new Node();
-					if (boardOfChild.canMove(Direction.values()[i])) {
-						boardOfChild.move(Direction.values()[i]);
-						//System.out.println("Board after move: " + i);
-						//boardOfChild.display();
-						//System.out.println("Actual Score " + boardOfChild.getActualScore());
-						//System.out.println("Number of Empty Cells " + boardOfChild.getNumberOfEmptyCells());
-						//System.out.println("Clustering Score " + boardOfChild.getClusteringScore());
-						child = alphaBeta(boardOfChild, depth - 1, false, alpha, beta);
-						alpha = Math.max(alpha, child.getValue());
-						child.setValueDirOfChild(Direction.values()[i]);
-						child.setActualScore(boardOfChild.getActualScore());
-						node.appendChild(child);
+					Board boardOfChildNode = (Board) board.clone();
+					Node childNode = new Node();
+					if (boardOfChildNode.canMove(Direction.values()[i])) {
+						boardOfChildNode.move(Direction.values()[i]);
+						childNode = alphaBeta(boardOfChildNode, depth - 1, false, alpha, beta);
+						alpha = Math.max(alpha, childNode.getValue());
+						childNode.setValueDirOfChild(Direction.values()[i]);
+						childNode.setActualScore(boardOfChildNode.getActualScore());
+						node.appendChild(childNode);
 						if (beta <= alpha)
 							break;
 					}
 				}
 				node.setValue(alpha);
-
 			} else {
 				int[] newvalue = { 2, 4 };
-				for (int i = 0; i < board.getEmptyCellIds().size(); i++) {
+				for (int emptyCellPos = 0; emptyCellPos < board.getNumberOfEmptyCells(); emptyCellPos++) {
 					Board boardOfChild = (Board) board.clone();
-					int row = board.getEmptyCellIds().get(i) / 4;
-					int col = board.getEmptyCellIds().get(i) % 4;
+
+					int row = board.getEmptyCellIds().get(emptyCellPos) / 4;
+					int col = board.getEmptyCellIds().get(emptyCellPos) % 4;
+
 					for (int valueOfCell : newvalue) {
-						try {
-							boardOfChild.setValueToCell(valueOfCell, row, col);
-							//System.out.println();
-							//boardOfChild.move(Direction.values()[i]);
-							//boardOfChild.display();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						boardOfChild.setValueToCell(valueOfCell, row, col);
 						Node child = new Node();
 						child = alphaBeta(boardOfChild, depth - 1, true, alpha, beta);
 						beta = Math.min(beta, child.getValue());
@@ -99,47 +83,58 @@ public class GameAgent {
 			}
 		}
 
-		// find bestDirection of Player
-		if (playerTurn && !node.isLeaf()) {
+		Direction bestDirection = this.findBestDirectionForPlayer(isPlayerTurn, node);
+		node.setDirection(bestDirection);
+
+		return node;
+	}
+
+	private Direction findBestDirectionForPlayer(boolean isPlayerTurn, Node node) {
+		Direction bestDirection = Direction.NONE;
+		// Direction.NONE means it is the computer's turn
+		if (isPlayerTurn && !node.isLeaf()) {
 			int maxHeuristic = node.getChildren().get(0).getValue();
 			bestDirection = node.getChildren().get(0).getValueDirOfChild();
-			//int maxActualScore = node.getChildren().get(0).getActualScore();
+			// int maxActualScore = node.getChildren().get(0).getActualScore();
 			for (int i = 0; i < node.getChildren().size(); i++) {
 				Node child = new Node();
 				child = node.getChildren().get(i);
 				if (child.getValue() > maxHeuristic) {
 					maxHeuristic = child.getValue();
 					bestDirection = child.getValueDirOfChild();
-					//maxActualScore = child.getActualScore();
+					// maxActualScore = child.getActualScore();
+				} else if (child.getValue() == maxHeuristic) {
+					// All children whose maxheuristic are the same,
+					// choose the child with maximum ActualScore
+					// maxActualScore = child.getActualScore();
 				}
 				// Try with this
-				/*else if (child.getValue() == maxHeuristic) {
-					// In all child who have maxheuristic equal each other,
-					// choose child have ActualScore is maximum
-					if (child.getActualScore() > maxActualScore) {
-						bestDirection = child.getValueDirOfChild();
-					}
-				}*/
+				/*
+				 * else if (child.getValue() == maxHeuristic) { // In all child
+				 * who have maxheuristic equal each other, // choose child have
+				 * ActualScore is maximum if (child.getActualScore() >
+				 * maxActualScore) { bestDirection = child.getValueDirOfChild();
+				 * } }
+				 */
 			}
 		}
-		node.setDirection(bestDirection);
-		return node;
+		return bestDirection;
 	}
 
 	private void setHeuristicScore(Node node, Board board) {
 		int heuristicScore = 0;
-		// if ActualScore = 0 then heuristic is math error
-		if (board.getActualScore() == 0) {
-			node.setValue(0);
-		} else {
+		// if ActualScore = 0 then heuristic will lead to a math error
+		if (board.getActualScore() != 0) {
 			heuristicScore = (int) (board.getActualScore()
 					+ Math.log(board.getActualScore()) * board.getNumberOfEmptyCells() - board.getClusteringScore());
 			// min of heuristic score is 1
 			node.setValue(Math.max(heuristicScore, 1));
+		} else {
+			node.setValue(0);
 		}
 	}
 
 	public Node getTreeRoot() {
-		return treeRoot;
+		return this.treeRoot;
 	}
 }

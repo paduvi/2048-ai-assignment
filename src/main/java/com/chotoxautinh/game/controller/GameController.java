@@ -1,28 +1,23 @@
 package com.chotoxautinh.game.controller;
 
-import java.util.Enumeration;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.AbstractButton;
-import javax.swing.SwingWorker;
-
 import com.chotoxautinh.ai.GameAgent;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
-import com.chotoxautinh.game.view.GameUI;
+import com.chotoxautinh.game.model.GetHintTask;
+import com.chotoxautinh.game.view.ui.NewGameModeUI;
 
 public class GameController {
 	private int depth = 3;
-	private GameUI gameUI;
+	private NewGameModeUI gameUI;
 	private Board board;
 	private Board oldBoard;
 	private GameAgent gameAgent;
-	private SwingWorker<Direction, Object> getHintTask;
+	private GetHintTask getHintTask;
 
 	/**
 	 * 
 	 */
-	public GameController(GameUI gameUI) {
+	public GameController(NewGameModeUI gameUI) {
 		setGameUI(gameUI);
 		gameAgent = new GameAgent(depth);
 		setDepth();
@@ -30,9 +25,9 @@ public class GameController {
 	}
 
 	public void initialize() {
+		setOldBoard(null);
 		setBoard(new Board(4));
 		getHint();
-		gameUI.postGameControllerInit();
 	}
 
 	public int getDepth() {
@@ -40,16 +35,9 @@ public class GameController {
 	}
 
 	public void setDepth() {
-		Enumeration<AbstractButton> list = gameUI.getBtnGroup().getElements();
-		int index = 1;
-		while (list.hasMoreElements()) {
-			AbstractButton btn = list.nextElement();
-			index++;
-			if (btn.isSelected()) {
-				setDepth(index * 2);
-			}
-		}
+		setDepth(gameUI.getDepth());
 		gameAgent.setDepth(depth);
+		System.out.println(depth);
 	}
 
 	private void setDepth(int depth) {
@@ -62,14 +50,13 @@ public class GameController {
 
 	public void setBoard(Board board) {
 		this.board = board;
-		gameUI.setBoard(board);
 	}
 
-	public GameUI getGameUI() {
+	public NewGameModeUI getGameUI() {
 		return gameUI;
 	}
 
-	public void setGameUI(GameUI gameUI) {
+	public void setGameUI(NewGameModeUI gameUI) {
 		this.gameUI = gameUI;
 	}
 
@@ -110,46 +97,19 @@ public class GameController {
 		this.oldBoard = oldBoard;
 	}
 
-	private void handleHint(Direction direction) {
+	public void handleHint(Direction direction) {
 		gameUI.receiveHint(direction);
+	}
+	
+	public GameAgent getGameAgent(){
+		return gameAgent;
 	}
 
 	public void getHint() {
 		if (getHintTask != null)
 			getHintTask.cancel(true);
-		getHintTask = new GetHintTask();
+		getHintTask = new GetHintTask(this);
 		getHintTask.execute();
 	}
 
-	private class GetHintTask extends SwingWorker<Direction, Object> {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.SwingWorker#doInBackground()
-		 */
-		@Override
-		protected Direction doInBackground() throws Exception {
-			return gameAgent.process(board);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.swing.SwingWorker#done()
-		 */
-		@Override
-		protected void done() {
-			try {
-				handleHint(get());
-			} catch (InterruptedException e) {
-				handleHint(Direction.NONE);
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				handleHint(Direction.NONE);
-				e.printStackTrace();
-			}
-		}
-
-	}
 }
