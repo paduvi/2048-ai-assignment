@@ -38,9 +38,10 @@ import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.controller.GameController;
 import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.view.component.BoardPanel;
+import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.component.ImagePanel;
 
-public class NewGameModeUI extends JPanel {
+public class NewGameModeUI extends JPanel implements CardPanel{
 
 	private static final long serialVersionUID = 1L;
 
@@ -209,7 +210,7 @@ public class NewGameModeUI extends JPanel {
 		lblResolverLevel.setBounds(20, 171, 152, 14);
 		controlPanel.add(lblResolverLevel);
 
-		JRadioButton rdbtnLow = new JRadioButton("Low");
+		JRadioButton rdbtnLow = new JRadioButton("6");
 		rdbtnLow.setBounds(20, 192, 109, 23);
 		rdbtnLow.setFocusable(false);
 		rdbtnLow.setSelected(true);
@@ -217,14 +218,14 @@ public class NewGameModeUI extends JPanel {
 		controlPanel.add(rdbtnLow);
 		btnGroup.add(rdbtnLow);
 
-		JRadioButton rdbtnMedium = new JRadioButton("Medium");
+		JRadioButton rdbtnMedium = new JRadioButton("8");
 		rdbtnMedium.setBounds(20, 218, 109, 23);
 		rdbtnMedium.setFocusable(false);
 		rdbtnMedium.addActionListener(changeListener);
 		controlPanel.add(rdbtnMedium);
 		btnGroup.add(rdbtnMedium);
 
-		JRadioButton rdbtnHigh = new JRadioButton("High");
+		JRadioButton rdbtnHigh = new JRadioButton("10");
 		rdbtnHigh.setBounds(20, 244, 109, 23);
 		rdbtnHigh.setFocusable(false);
 		rdbtnHigh.addActionListener(changeListener);
@@ -423,6 +424,15 @@ public class NewGameModeUI extends JPanel {
 				return;
 			move(direction);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.chotoxautinh.game.view.component.CardPanel#closed()
+	 */
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

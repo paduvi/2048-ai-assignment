@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.ui.MainMenu;
 import com.chotoxautinh.game.view.ui.MenuBar;
 
@@ -100,7 +101,8 @@ public class ApplicationWindow extends JFrame {
 		}
 		Component[] components = mainApp.getFrame().getContentPane().getComponents();
 		for (Component component : components) {
-			if (component.isVisible() && !(component instanceof MainMenu)) {
+			if (component.isVisible() && component instanceof CardPanel) {
+				((CardPanel) component).closed();
 				getContentPane().remove(component);
 				break;
 			}

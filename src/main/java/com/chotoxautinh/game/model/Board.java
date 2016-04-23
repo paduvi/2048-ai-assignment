@@ -38,7 +38,6 @@ public class Board implements Cloneable {
 		// Initialize two cell at random
 		this.addRandomCell();
 		this.addRandomCell();
-		System.out.println(this.getNumberOfEmptyCells());
 	}
 
 	public boolean addRandomCell() throws IndexOutOfBoundsException {
@@ -226,13 +225,13 @@ public class Board implements Cloneable {
 	}
 
 	// this method is created by Khang
-	public void setValueToCell(int value, int row, int col) throws Exception {
+	public void setValueToCell(int value, int row, int col) throws IndexOutOfBoundsException {
 		if ((row < this.getSize()) && (col < this.getSize())) {
 			if (cells[row][col] == 0)
 				this.setNumberOfEmptyCells(this.getNumberOfEmptyCells() - 1);
 			cells[row][col] = value;
 		} else {
-			throw new Exception("Invalid cell!");
+			throw new IndexOutOfBoundsException("Invalid cell!");
 		}
 	}
 
@@ -387,11 +386,9 @@ public class Board implements Cloneable {
 		boolean standardCase = false;
 
 		for (int row = 0; row < this.getSize(); row++) {
-			System.out.println("Check row " + row + " Result: " + this.checkRow(row));
 			standardCase |= this.checkRow(row);
 		}
 
-		System.out.println("Standard case: " + standardCase);
 		if (standardCase) {
 			return true;
 		} else {

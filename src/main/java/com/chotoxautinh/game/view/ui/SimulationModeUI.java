@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -29,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -36,9 +40,11 @@ import javax.swing.event.ChangeListener;
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.SimulatedTask;
+import com.chotoxautinh.game.view.component.CardPanel;
+import com.chotoxautinh.util.MathUtils;
 import com.chotoxautinh.util.StringUtils;
 
-public class SimulationModeUI extends JPanel {
+public class SimulationModeUI extends JPanel implements CardPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField numberTextField;
@@ -53,6 +59,7 @@ public class SimulationModeUI extends JPanel {
 	private JRadioButton rdbtnCustom;
 	private JButton btnStart;
 	private JCheckBox chckbxClearOnStart;
+	private JButton btnCancel;
 
 	private Application mainApp;
 	private int depth = 4;
@@ -62,10 +69,15 @@ public class SimulationModeUI extends JPanel {
 	private int nCompletedGames;
 	private int nWinGames;
 
-	private List<SimulatedTask> taskList;
+	private Semaphore mutex;
+
+	private static final int MAX_THREAD_POOL = 5;
+	private ExecutorService executorService;
 
 	private JEditorPane editorPane;
 	private StringBuilder editorText = new StringBuilder();
+
+	private List<SimulatedTask> taskList;
 
 	public SimulationModeUI(Application mainApp) {
 		this.mainApp = mainApp;
@@ -182,6 +194,7 @@ public class SimulationModeUI extends JPanel {
 		add(editorPanel, gbc_editorPanel);
 
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setBounds(10, 11, 680, 377);
 		editorPanel.add(scrollPane);
 
@@ -202,14 +215,29 @@ public class SimulationModeUI extends JPanel {
 
 		progressLabel = new JLabel("0%");
 		progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		progressLabel.setBounds(10, 5, 680, 19);
+		progressLabel.setBounds(10, 5, 581, 19);
 		progressPanel.add(progressLabel);
 
 		progressBar = new JProgressBar();
 		progressBar.setForeground(Color.GREEN);
-		progressBar.setBounds(10, 5, 680, 19);
+		progressBar.setBounds(10, 5, 581, 19);
 		progressPanel.add(progressBar);
+
+		btnCancel = new JButton("Cancel");
+		btnCancel.setEnabled(false);
+		btnCancel.setBounds(601, 3, 89, 23);
+		btnCancel.addActionListener(cancelHandler);
+		progressPanel.add(btnCancel);
 	}
+	
+	private ActionListener cancelHandler = o -> {
+		for (SimulatedTask task : taskList) {
+			task.setStop(true);
+		}
+		editorText.append("Canceled Simulating Process!").append("\n");
+		editorPane.setText(editorText.toString());
+		toggleBtn(false);
+	};
 
 	private ActionListener changeListener = o -> {
 		Enumeration<AbstractButton> list = buttonGroup.getElements();
@@ -247,8 +275,12 @@ public class SimulationModeUI extends JPanel {
 		rdbtnCustom.setEnabled(!start);
 		if (!start && rdbtnCustom.isSelected())
 			slider.setEnabled(!start);
+		else if (start)
+			slider.setEnabled(!start);
 		btnStart.setEnabled(!start);
 		numberTextField.setEnabled(!start);
+		
+		btnCancel.setEnabled(start);
 	}
 
 	private ActionListener startHandler = o -> {
@@ -266,17 +298,20 @@ public class SimulationModeUI extends JPanel {
 		progressLabel.setText("0%");
 		progressPercent = 0;
 		nGames = Integer.parseInt(txt);
-		taskList = new LinkedList<>();
 		toggleBtn(true);
 		if (chckbxClearOnStart.isSelected()) {
 			clearConsole();
 		}
+		mutex = new Semaphore(1);
 		editorText.append("Start Simulating " + nGames + " Games...").append("\n");
 		editorPane.setText(editorText.toString());
+		executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL);
+
+		taskList = new LinkedList<>();
 		for (int i = 0; i < nGames; i++) {
 			SimulatedTask task = new SimulatedTask(this);
 			taskList.add(task);
-			task.execute();
+			executorService.submit(task);
 		}
 	};
 
@@ -288,14 +323,9 @@ public class SimulationModeUI extends JPanel {
 	}
 
 	public void showResult(Board board) {
-		if (++nCompletedGames == nGames) {
-			toggleBtn(false);
-			progressBar.setValue(100);
-			progressLabel.setText("100%");
-			mainApp.setIngame(false);
-		}
+		++nCompletedGames;
 		if (board == null) {
-			editorText.append("Some errors has occured when simulating game " + nCompletedGames + ".");
+			editorText.append("Some errors has occured when calculating move in game " + nCompletedGames + ".");
 		} else if (board.hasWon()) {
 			nWinGames++;
 			editorText.append("Game " + nCompletedGames + " has won - Score: " + board.getActualScore() + ".");
@@ -303,8 +333,6 @@ public class SimulationModeUI extends JPanel {
 			try {
 				if (board.isTerminated()) {
 					editorText.append("Game " + nCompletedGames + " has lost - Score: " + board.getActualScore() + ".");
-				} else {
-					editorText.append("Some errors has occured when calculating move in game " + nCompletedGames + ".");
 				}
 			} catch (CloneNotSupportedException e) {
 				editorText.append("Some errors has occured when simulating game " + nCompletedGames + ".");
@@ -312,6 +340,14 @@ public class SimulationModeUI extends JPanel {
 		}
 		editorText.append(" Won " + nWinGames + "/" + nCompletedGames + " games!").append("\n");
 		editorPane.setText(editorText.toString());
+		if (nCompletedGames == nGames) {
+			toggleBtn(false);
+			progressBar.setValue(100);
+			progressLabel.setText("100%");
+			mainApp.setIngame(false);
+			editorText.append("=======> WIN RATE: " + MathUtils.formatNumber(nWinGames * 1.0 / nGames)).append("\n");
+			editorPane.setText(editorText.toString());
+		}
 	}
 
 	public int getDepth() {
@@ -346,4 +382,19 @@ public class SimulationModeUI extends JPanel {
 	public int getNumberOfGame() {
 		return nGames;
 	}
+
+	public Semaphore getMutex() {
+		return mutex;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.chotoxautinh.game.view.component.CardPanel#onClosing()
+	 */
+	@Override
+	public void closed() {
+		for (SimulatedTask task : taskList) {
+			task.setStop(true);
+		}
+	}
+
 }

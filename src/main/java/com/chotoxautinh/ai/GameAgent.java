@@ -14,8 +14,7 @@ public class GameAgent {
 		this.treeRoot = new Node();
 	}
 
-	public Direction process(Board board) throws Exception {
-		System.out.println("Depth Agent: " + depth);
+	public Direction process(Board board) throws CloneNotSupportedException{
 		treeRoot = alphaBeta(board, depth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		return treeRoot.getDirection();
 	}
@@ -28,7 +27,7 @@ public class GameAgent {
 		this.depth = depth;
 	}
 
-	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta) throws Exception {
+	private Node alphaBeta(Board board, int depth, boolean isPlayerTurn, int alpha, int beta) throws CloneNotSupportedException{
 		Node node = new Node();
 
 		if (board.isTerminated()) {
