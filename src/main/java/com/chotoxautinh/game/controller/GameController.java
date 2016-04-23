@@ -4,11 +4,11 @@ import com.chotoxautinh.ai.GameAgent;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.model.GetHintTask;
-import com.chotoxautinh.game.view.ui.NewGameModeUI;
+import com.chotoxautinh.game.view.ui.NormalGameModeUI;
 
 public class GameController {
 	private int depth = 3;
-	private NewGameModeUI gameUI;
+	private NormalGameModeUI gameUI;
 	private Board board;
 	private Board oldBoard;
 	private GameAgent gameAgent;
@@ -17,7 +17,7 @@ public class GameController {
 	/**
 	 * 
 	 */
-	public GameController(NewGameModeUI gameUI) {
+	public GameController(NormalGameModeUI gameUI) {
 		setGameUI(gameUI);
 		gameAgent = new GameAgent(depth);
 		setDepth();
@@ -52,11 +52,11 @@ public class GameController {
 		this.board = board;
 	}
 
-	public NewGameModeUI getGameUI() {
+	public NormalGameModeUI getGameUI() {
 		return gameUI;
 	}
 
-	public void setGameUI(NewGameModeUI gameUI) {
+	public void setGameUI(NormalGameModeUI gameUI) {
 		this.gameUI = gameUI;
 	}
 

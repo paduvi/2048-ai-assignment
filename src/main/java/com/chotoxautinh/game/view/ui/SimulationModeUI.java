@@ -38,6 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.SimulatedTask;
 import com.chotoxautinh.game.view.component.CardPanel;
@@ -241,8 +242,8 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 
 	private ActionListener changeListener = o -> {
 		Enumeration<AbstractButton> list = buttonGroup.getElements();
-		int start = 2;
-		int index = 0;
+		int start = Constant.SIMULATED_START_DEPTH;
+		int index = -1;
 		while (list.hasMoreElements()) {
 			AbstractButton btn = list.nextElement();
 			index++;

@@ -5,7 +5,7 @@
  */
 package com.chotoxautinh.game.model;
 
-public class HighScore implements Comparable<HighScore> {
+public class HighScore implements Comparable<HighScore>{
 
 	private String name; // Name of Player
 	private int score; // score after game completed

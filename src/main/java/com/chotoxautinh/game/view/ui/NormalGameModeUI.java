@@ -35,13 +35,14 @@ import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.controller.GameController;
 import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.view.component.BoardPanel;
 import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.component.ImagePanel;
 
-public class NewGameModeUI extends JPanel implements CardPanel{
+public class NormalGameModeUI extends JPanel implements CardPanel{
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,7 +73,7 @@ public class NewGameModeUI extends JPanel implements CardPanel{
 	/**
 	 * Create the panel.
 	 */
-	public NewGameModeUI(Application mainApp) {
+	public NormalGameModeUI(Application mainApp) {
 		this.setMainApp(mainApp);
 		initLayout();
 		initialize();
@@ -267,8 +268,8 @@ public class NewGameModeUI extends JPanel implements CardPanel{
 
 	public int getDepth() {
 		Enumeration<AbstractButton> list = btnGroup.getElements();
-		int start = 4;
-		int index = 0;
+		int start = Constant.NORMAL_START_DEPTH;
+		int index = -1;
 		while (list.hasMoreElements()) {
 			AbstractButton btn = list.nextElement();
 			index++;

@@ -77,7 +77,7 @@ public class MainMenu extends JPanel {
 	}
 
 	private ActionListener newGameHandler = o -> {
-		NewGameModeUI gameUI = new NewGameModeUI(mainApp);
+		NormalGameModeUI gameUI = new NormalGameModeUI(mainApp);
 		mainApp.getFrame().getContentPane().add(gameUI, "content");
 		mainApp.getFrame().getLayout().show(mainApp.getFrame().getContentPane(), "content");
 	};
