@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.ui.MainMenu;
 import com.chotoxautinh.game.view.ui.MenuBar;
@@ -28,6 +29,8 @@ public class ApplicationWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+
 	private Application mainApp;
 	private CardLayout layout;
 
@@ -37,7 +40,7 @@ public class ApplicationWindow extends JFrame {
 	}
 
 	private void initialize() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ApplicationWindow.class.getResource("/stuff/logo.jpg")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(STUFF_FOLDER + "logo.jpg"));
 		setTitle("2048");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -47,7 +50,7 @@ public class ApplicationWindow extends JFrame {
 				Object objButtons[] = { "Sure... Byte Byte", "No" };
 				int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Are you sure you want to exit?",
 						"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-						new ImageIcon(Application.class.getResource("/stuff/9_50x50.png")), objButtons, objButtons[1]);
+						new ImageIcon(STUFF_FOLDER + "9_50x50.png"), objButtons, objButtons[1]);
 				if (promptResult == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
@@ -92,8 +95,8 @@ public class ApplicationWindow extends JFrame {
 			Object objButtons[] = { "Yes", "No" };
 			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
 					"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.WARNING_MESSAGE, new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")),
-					objButtons, objButtons[1]);
+					JOptionPane.WARNING_MESSAGE, new ImageIcon(STUFF_FOLDER + "8_50x50.png"), objButtons,
+					objButtons[1]);
 			if (promptResult == JOptionPane.NO_OPTION) {
 				return;
 			}

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.model.Board;
 
 public class BoardPanel extends JPanel {
@@ -23,6 +24,7 @@ public class BoardPanel extends JPanel {
 	public static int HGAP = 15;
 	public static int VGAP = 15;
 	public static int CELL_SIZE = 106;
+	public static String TILE_FOLDER = Constant.TILES.getFile();
 
 	private Board board;
 	Image bgImage;
@@ -34,10 +36,10 @@ public class BoardPanel extends JPanel {
 	}
 
 	private void loadImage() {
-		bgImage = Toolkit.getDefaultToolkit().createImage(getClass().getResource("/tiles/background.png"));
-		mapImage.put(0, Toolkit.getDefaultToolkit().createImage(getClass().getResource("/tiles/0.gif")));
+		bgImage = Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + "background.png");
+		mapImage.put(0, Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + "0.gif"));
 		for (int i = 2; i < 2048; i = i * 2) {
-			mapImage.put(i, Toolkit.getDefaultToolkit().createImage(getClass().getResource("/tiles/" + i + ".gif")));
+			mapImage.put(i, Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + i + ".gif"));
 		}
 	}
 

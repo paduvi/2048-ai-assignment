@@ -48,6 +48,9 @@ import com.chotoxautinh.util.StringUtils;
 public class SimulationModeUI extends JPanel implements CardPanel {
 
 	private static final long serialVersionUID = 1L;
+
+	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+
 	private JTextField numberTextField;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JProgressBar progressBar;
@@ -71,6 +74,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private int nWinGames;
 
 	private Semaphore mutex;
+	private Long startTime;
 
 	private static final int MAX_THREAD_POOL = 5;
 	private ExecutorService executorService;
@@ -230,7 +234,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		btnCancel.addActionListener(cancelHandler);
 		progressPanel.add(btnCancel);
 	}
-	
+
 	private ActionListener cancelHandler = o -> {
 		for (SimulatedTask task : taskList) {
 			task.setStop(true);
@@ -280,7 +284,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 			slider.setEnabled(!start);
 		btnStart.setEnabled(!start);
 		numberTextField.setEnabled(!start);
-		
+
 		btnCancel.setEnabled(start);
 	}
 
@@ -289,7 +293,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		if (!StringUtils.isPositiveInteger(txt)) {
 			JOptionPane.showMessageDialog(mainApp.getFrame(), "Please input a positive number!",
 					"Invalid number string: " + txt, JOptionPane.WARNING_MESSAGE,
-					new ImageIcon(MenuBar.class.getResource("/stuff/10_50x50.png")));
+					new ImageIcon(STUFF_FOLDER + "10_50x50.png"));
 			return;
 		}
 		mainApp.setIngame(true);
@@ -308,6 +312,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		editorPane.setText(editorText.toString());
 		executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL);
 
+		startTime = System.currentTimeMillis();
 		taskList = new LinkedList<>();
 		for (int i = 0; i < nGames; i++) {
 			SimulatedTask task = new SimulatedTask(this);
@@ -342,6 +347,18 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		editorText.append(" Won " + nWinGames + "/" + nCompletedGames + " games!").append("\n");
 		editorPane.setText(editorText.toString());
 		if (nCompletedGames == nGames) {
+			Long currentTime = System.currentTimeMillis();
+			Long deltaTime = currentTime - startTime;
+			if (deltaTime > 60 * 1000) {
+				long minute = deltaTime / 1000 / 60;
+				long second = deltaTime / 1000 - 60 * minute;
+				editorText.append("=======> Executing Time: " + minute + " Minutes " + second + " Seconds").append("\n");
+			} else {
+				editorText.append(
+						"=======> Executing Time: " + MathUtils.formatNumber(deltaTime * 1.0 / 1000) + " Seconds")
+						.append("\n");
+			}
+			editorPane.setText(editorText.toString());
 			toggleBtn(false);
 			progressBar.setValue(100);
 			progressLabel.setText("100%");
@@ -388,11 +405,15 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		return mutex;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.chotoxautinh.game.view.component.CardPanel#onClosing()
 	 */
 	@Override
 	public void closed() {
+		if (taskList == null)
+			return;
 		for (SimulatedTask task : taskList) {
 			task.setStop(true);
 		}

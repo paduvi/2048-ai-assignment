@@ -42,13 +42,16 @@ import com.chotoxautinh.game.view.component.BoardPanel;
 import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.component.ImagePanel;
 
-public class NormalGameModeUI extends JPanel implements CardPanel{
+public class NormalGameModeUI extends JPanel implements CardPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final String WIN = "win";
 	public static final String LOSE = "lose";
 	public static final String INGAME = "board";
+
+	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+	public static final String TILE_FOLDER = Constant.TILES.getFile();
 
 	private Application mainApp;
 
@@ -144,10 +147,10 @@ public class NormalGameModeUI extends JPanel implements CardPanel{
 		boardPanel = new BoardPanel(null);
 		gamePanel.add(boardPanel, INGAME);
 
-		ImagePanel winPanel = new ImagePanel(getClass().getResource("/tiles/2048.gif"));
+		ImagePanel winPanel = new ImagePanel(TILE_FOLDER + "2048.gif");
 		gamePanel.add(winPanel, WIN);
 
-		ImagePanel losePanel = new ImagePanel(getClass().getResource("/tiles/game-over.gif"));
+		ImagePanel losePanel = new ImagePanel(TILE_FOLDER + "game-over.gif");
 		gamePanel.add(losePanel, LOSE);
 	}
 
@@ -296,7 +299,7 @@ public class NormalGameModeUI extends JPanel implements CardPanel{
 	public void displayLoseResult() {
 		JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!",
 				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
-				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/12_50x50.png")));
+				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "12_50x50.png"));
 		displayGameLayout(LOSE);
 		endGame();
 	}
@@ -352,7 +355,7 @@ public class NormalGameModeUI extends JPanel implements CardPanel{
 			Object objButtons[] = { "Yes", "No" };
 			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
 					"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-					new ImageIcon(Application.class.getResource("/stuff/8_50x50.png")), objButtons, objButtons[1]);
+					new ImageIcon(STUFF_FOLDER + "24_50x50.png"), objButtons, objButtons[1]);
 			if (promptResult == JOptionPane.YES_OPTION) {
 				initialize();
 			}
@@ -427,13 +430,15 @@ public class NormalGameModeUI extends JPanel implements CardPanel{
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.chotoxautinh.game.view.component.CardPanel#closed()
 	 */
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

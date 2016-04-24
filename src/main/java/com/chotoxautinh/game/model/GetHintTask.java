@@ -13,7 +13,7 @@ import com.chotoxautinh.game.controller.GameController;
 
 public class GetHintTask extends SwingWorker<Direction, Object> {
 
-	public GameController gameController;
+	private GameController gameController;
 
 	/**
 	 * 

@@ -23,6 +23,10 @@ public class ImagePanel extends JPanel {
 		this.image = Toolkit.getDefaultToolkit().createImage(url);
 	}
 
+	public ImagePanel(String url) {
+		this.image = Toolkit.getDefaultToolkit().createImage(url);
+	}
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);

@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import com.chotoxautinh.game.Application;
+import com.chotoxautinh.game.config.Constant;
 
 public class MenuBar extends JMenuBar {
 
@@ -25,6 +26,8 @@ public class MenuBar extends JMenuBar {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
 
 	private Application mainApp;
 
@@ -56,17 +59,16 @@ public class MenuBar extends JMenuBar {
 	}
 
 	private ActionListener mmHandler = o -> mainApp.getFrame().backToMainMenu();
-	
+
 	private ActionListener exitHandler = o -> mainApp.getFrame()
 			.dispatchEvent(new WindowEvent(mainApp.getFrame(), WindowEvent.WINDOW_CLOSING));
 
 	private ActionListener helpHandler = o -> JOptionPane.showMessageDialog(mainApp.getFrame(),
 			"Wut? This is 2048 Resolver App\nAnd still want more fucking help?\nGO TO HELL, FUCKING IDIOT!!!", "Help",
-			JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MenuBar.class.getResource("/stuff/36_50x50.png")));
+			JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "36_50x50.png"));
 
 	private ActionListener copyleftHandler = o -> JOptionPane.showMessageDialog(mainApp.getFrame(), "Chó To Xấu Tính",
-			"Copyleft", JOptionPane.INFORMATION_MESSAGE,
-			new ImageIcon(MenuBar.class.getResource("/stuff/17_50x50.png")));
+			"Copyleft", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "17_50x50.png"));
 
 	public Application getMainApp() {
 		return mainApp;
