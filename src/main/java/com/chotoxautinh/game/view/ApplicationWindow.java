@@ -104,12 +104,17 @@ public class ApplicationWindow extends JFrame {
 	public void backToMainMenu() {
 		if (mainApp.isIngame()) {
 			Object objButtons[] = { "Yes", "No" };
-			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
-					"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.WARNING_MESSAGE, new ImageIcon(STUFF_FOLDER + "8_50x50.png"), objButtons,
-					objButtons[1]);
-			if (promptResult == JOptionPane.NO_OPTION) {
-				return;
+			int promptResult;
+			try {
+				promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
+						"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE, new ImageIcon(new URL(STUFF_FOLDER, "8_50x50.png")), objButtons,
+						objButtons[1]);
+				if (promptResult == JOptionPane.NO_OPTION) {
+					return;
+				}
+			} catch (HeadlessException | MalformedURLException e) {
+				e.printStackTrace();
 			}
 			mainApp.setIngame(false);
 		}
