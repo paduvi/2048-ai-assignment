@@ -16,8 +16,9 @@ import java.awt.RenderingHints;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -38,7 +39,7 @@ public class MainMenu extends JPanel {
 	private static final int SIMULATION_ICON = 8;
 	private static final int HIGH_SCORE_ICON = 27;
 
-	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+	public static final URL STUFF_FOLDER = Constant.STUFF;
 
 	private Application mainApp;
 	private JPanel mainMn;
@@ -94,7 +95,11 @@ public class MainMenu extends JPanel {
 
 	private void addBtn(String title, int imgNum, ActionListener listener) {
 		JButton btn = new JButton(title);
-		btn.setIcon(new ImageIcon(STUFF_FOLDER + imgNum + "_50x50.png"));
+		try {
+			btn.setIcon(new ImageIcon(new URL(STUFF_FOLDER, imgNum + "_50x50.png")));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		btn.setFont(new Font("Comic Sans MS", Font.BOLD, 15));
 		btn.setFocusable(false);
 		btn.setBackground(SystemColor.inactiveCaption);
@@ -116,7 +121,7 @@ public class MainMenu extends JPanel {
 
 		BufferedImage bgImage;
 		try {
-			bgImage = ImageIO.read(new File(STUFF_FOLDER, "background.jpg"));
+			bgImage = ImageIO.read(new URL(STUFF_FOLDER, "background.jpg"));
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g2.drawImage(bgImage, 0, 0, getWidth(), getHeight(), null);

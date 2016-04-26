@@ -10,11 +10,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
@@ -50,8 +53,8 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 	public static final String LOSE = "lose";
 	public static final String INGAME = "board";
 
-	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
-	public static final String TILE_FOLDER = Constant.TILES.getFile();
+	public static final URL STUFF_FOLDER = Constant.STUFF;
+	public static final URL TILE_FOLDER = Constant.TILES;
 
 	private Application mainApp;
 
@@ -147,11 +150,16 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 		boardPanel = new BoardPanel(null);
 		gamePanel.add(boardPanel, INGAME);
 
-		ImagePanel winPanel = new ImagePanel(TILE_FOLDER + "2048.gif");
-		gamePanel.add(winPanel, WIN);
+		ImagePanel winPanel;
+		try {
+			winPanel = new ImagePanel(new URL(TILE_FOLDER, "2048.gif"));
+			gamePanel.add(winPanel, WIN);
 
-		ImagePanel losePanel = new ImagePanel(TILE_FOLDER + "game-over.gif");
-		gamePanel.add(losePanel, LOSE);
+			ImagePanel losePanel = new ImagePanel(new URL(TILE_FOLDER, "game-over.gif"));
+			gamePanel.add(losePanel, LOSE);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void displayGameLayout(String name) {
@@ -297,11 +305,16 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 	}
 
 	public void displayLoseResult() {
-		JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!",
-				"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
-				JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "12_50x50.png"));
-		displayGameLayout(LOSE);
-		endGame();
+		try {
+			JOptionPane.showMessageDialog(mainApp.getFrame(), "Muahahahahaha!",
+					"GAME OVER! Your score is: " + gameController.getBoard().getActualScore(),
+					JOptionPane.INFORMATION_MESSAGE, new ImageIcon(new URL(STUFF_FOLDER, "12_50x50.png")));
+		} catch (HeadlessException | MalformedURLException e) {
+			e.printStackTrace();
+		} finally {
+			displayGameLayout(LOSE);
+			endGame();
+		}
 	}
 
 	public void displayWinResult() {
@@ -350,17 +363,26 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 		}
 	};
 
-	private ActionListener newGameHandler = o -> {
-		if (mainApp.isIngame()) {
-			Object objButtons[] = { "Yes", "No" };
-			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
-					"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-					new ImageIcon(STUFF_FOLDER + "24_50x50.png"), objButtons, objButtons[1]);
-			if (promptResult == JOptionPane.YES_OPTION) {
+	private ActionListener newGameHandler = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (mainApp.isIngame()) {
+				Object objButtons[] = { "Yes", "No" };
+				int promptResult;
+				try {
+					promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Do you want to start a new game?",
+							"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							new ImageIcon(new URL(STUFF_FOLDER, "24_50x50.png")), objButtons, objButtons[1]);
+					if (promptResult == JOptionPane.YES_OPTION) {
+						initialize();
+					}
+				} catch (HeadlessException | MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			} else {
 				initialize();
 			}
-		} else {
-			initialize();
 		}
 	};
 

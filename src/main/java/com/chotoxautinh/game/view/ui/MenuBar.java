@@ -5,10 +5,14 @@
  */
 package com.chotoxautinh.game.view.ui;
 
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -27,7 +31,7 @@ public class MenuBar extends JMenuBar {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+	public static final URL STUFF_FOLDER = Constant.STUFF;
 
 	private Application mainApp;
 
@@ -63,12 +67,32 @@ public class MenuBar extends JMenuBar {
 	private ActionListener exitHandler = o -> mainApp.getFrame()
 			.dispatchEvent(new WindowEvent(mainApp.getFrame(), WindowEvent.WINDOW_CLOSING));
 
-	private ActionListener helpHandler = o -> JOptionPane.showMessageDialog(mainApp.getFrame(),
-			"Wut? This is 2048 Resolver App\nAnd still want more fucking help?\nGO TO HELL, FUCKING IDIOT!!!", "Help",
-			JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "36_50x50.png"));
+	private ActionListener helpHandler = new ActionListener() {
 
-	private ActionListener copyleftHandler = o -> JOptionPane.showMessageDialog(mainApp.getFrame(), "Chó To Xấu Tính",
-			"Copyleft", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(STUFF_FOLDER + "17_50x50.png"));
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				JOptionPane.showMessageDialog(mainApp.getFrame(),
+						"Wut? This is 2048 Resolver App\nAnd still want more fucking help?\nGO TO HELL, FUCKING IDIOT!!!",
+						"Help", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(new URL(STUFF_FOLDER, "36_50x50.png")));
+			} catch (HeadlessException | MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+		}
+	};
+
+	private ActionListener copyleftHandler = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				JOptionPane.showMessageDialog(mainApp.getFrame(), "Chó To Xấu Tính", "Copyleft",
+						JOptionPane.INFORMATION_MESSAGE, new ImageIcon(new URL(STUFF_FOLDER, "17_50x50.png")));
+			} catch (HeadlessException | MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+		}
+	};
 
 	public Application getMainApp() {
 		return mainApp;
