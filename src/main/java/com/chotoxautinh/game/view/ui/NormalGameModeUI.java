@@ -222,7 +222,7 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 		lblResolverLevel.setBounds(20, 171, 152, 14);
 		controlPanel.add(lblResolverLevel);
 
-		JRadioButton rdbtnLow = new JRadioButton("6");
+		JRadioButton rdbtnLow = new JRadioButton(String.valueOf(Constant.NORMAL_START_DEPTH));
 		rdbtnLow.setBounds(20, 192, 109, 23);
 		rdbtnLow.setFocusable(false);
 		rdbtnLow.setSelected(true);
@@ -230,14 +230,14 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 		controlPanel.add(rdbtnLow);
 		btnGroup.add(rdbtnLow);
 
-		JRadioButton rdbtnMedium = new JRadioButton("8");
+		JRadioButton rdbtnMedium = new JRadioButton(String.valueOf(Constant.NORMAL_START_DEPTH + 2));
 		rdbtnMedium.setBounds(20, 218, 109, 23);
 		rdbtnMedium.setFocusable(false);
 		rdbtnMedium.addActionListener(changeListener);
 		controlPanel.add(rdbtnMedium);
 		btnGroup.add(rdbtnMedium);
 
-		JRadioButton rdbtnHigh = new JRadioButton("10");
+		JRadioButton rdbtnHigh = new JRadioButton(String.valueOf(Constant.NORMAL_START_DEPTH + 4));
 		rdbtnHigh.setBounds(20, 244, 109, 23);
 		rdbtnHigh.setFocusable(false);
 		rdbtnHigh.addActionListener(changeListener);
@@ -424,8 +424,11 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 	private void move(Direction direction) {
 		try {
 			if (mainApp.isIngame()) {
-				if (direction == Direction.NONE && auto)
+				if (direction == Direction.NONE && auto) {
 					toggleAutoBtn(false);
+					btnUndo.setEnabled(true);
+					return;
+				}
 				if (gameController.getBoard().canMove(direction)) {
 					loading();
 					gameController.move(direction);

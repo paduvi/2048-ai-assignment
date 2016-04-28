@@ -81,7 +81,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private Long startTime;
 	private SimulationModeUI self;
 
-	private static final int MAX_THREAD_POOL = 5;
+	private static final int MAX_THREAD_POOL = Constant.MAX_THREAD_POOL;
 	private ExecutorService executorService;
 
 	private JEditorPane editorPane;
@@ -125,27 +125,27 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		add(formPanel, gbc_formPanel);
 
 		JLabel lblNumberOfGames = new JLabel("Number of Games:");
-		lblNumberOfGames.setBounds(10, 52, 111, 14);
+		lblNumberOfGames.setBounds(10, 52, 130, 14);
 		formPanel.add(lblNumberOfGames);
 
 		JLabel lblDepth = new JLabel("Depth:");
 		lblDepth.setBounds(10, 15, 47, 14);
 		formPanel.add(lblDepth);
 
-		rdbtnLow = new JRadioButton("Low");
+		rdbtnLow = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH));
 		buttonGroup.add(rdbtnLow);
 		rdbtnLow.addActionListener(changeListener);
 		rdbtnLow.setSelected(true);
 		rdbtnLow.setBounds(80, 11, 67, 23);
 		formPanel.add(rdbtnLow);
 
-		rdbtnMedium = new JRadioButton("Medium");
+		rdbtnMedium = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 2));
 		buttonGroup.add(rdbtnMedium);
 		rdbtnMedium.addActionListener(changeListener);
 		rdbtnMedium.setBounds(149, 11, 78, 23);
 		formPanel.add(rdbtnMedium);
 
-		rdbtnHigh = new JRadioButton("High");
+		rdbtnHigh = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 4));
 		buttonGroup.add(rdbtnHigh);
 		rdbtnHigh.addActionListener(changeListener);
 		rdbtnHigh.setBounds(229, 11, 71, 23);
@@ -190,7 +190,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		formPanel.add(chckbxClearOnStart);
 
 		depthLabel = new JLabel("4");
-		depthLabel.setBounds(49, 15, 46, 14);
+		depthLabel.setBounds(60, 15, 35, 14);
 		formPanel.add(depthLabel);
 	}
 

@@ -1,6 +1,5 @@
 package com.chotoxautinh.game.controller;
 
-import com.chotoxautinh.ai.GameAgent;
 import com.chotoxautinh.game.model.Board;
 import com.chotoxautinh.game.model.Direction;
 import com.chotoxautinh.game.model.GetHintTask;
@@ -11,7 +10,6 @@ public class GameController {
 	private NormalGameModeUI gameUI;
 	private Board board;
 	private Board oldBoard;
-	private GameAgent gameAgent;
 	private GetHintTask getHintTask;
 
 	/**
@@ -19,7 +17,6 @@ public class GameController {
 	 */
 	public GameController(NormalGameModeUI gameUI) {
 		setGameUI(gameUI);
-		gameAgent = new GameAgent(depth);
 		setDepth();
 		initialize();
 	}
@@ -36,7 +33,6 @@ public class GameController {
 
 	public void setDepth() {
 		setDepth(gameUI.getDepth());
-		gameAgent.setDepth(depth);
 		System.out.println(depth);
 	}
 
@@ -101,13 +97,9 @@ public class GameController {
 		gameUI.receiveHint(direction);
 	}
 	
-	public GameAgent getGameAgent(){
-		return gameAgent;
-	}
-
 	public void getHint() {
 		if (getHintTask != null)
-			getHintTask.cancel(true);
+			getHintTask.cancel();
 		getHintTask = new GetHintTask(this);
 		getHintTask.execute();
 	}
