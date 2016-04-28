@@ -9,8 +9,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +53,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+	public static final URL STUFF_FOLDER = Constant.STUFF;
 
 	private JTextField numberTextField;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -75,6 +79,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 
 	private Semaphore mutex;
 	private Long startTime;
+	private SimulationModeUI self;
 
 	private static final int MAX_THREAD_POOL = Constant.MAX_THREAD_POOL;
 	private ExecutorService executorService;
@@ -85,6 +90,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private List<SimulatedTask> taskList;
 
 	public SimulationModeUI(Application mainApp) {
+		self = this;
 		this.mainApp = mainApp;
 		initialize();
 	}
@@ -119,27 +125,27 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		add(formPanel, gbc_formPanel);
 
 		JLabel lblNumberOfGames = new JLabel("Number of Games:");
-		lblNumberOfGames.setBounds(10, 52, 111, 14);
+		lblNumberOfGames.setBounds(10, 52, 130, 14);
 		formPanel.add(lblNumberOfGames);
 
 		JLabel lblDepth = new JLabel("Depth:");
 		lblDepth.setBounds(10, 15, 47, 14);
 		formPanel.add(lblDepth);
 
-		rdbtnLow = new JRadioButton("Low");
+		rdbtnLow = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH));
 		buttonGroup.add(rdbtnLow);
 		rdbtnLow.addActionListener(changeListener);
 		rdbtnLow.setSelected(true);
 		rdbtnLow.setBounds(80, 11, 67, 23);
 		formPanel.add(rdbtnLow);
 
-		rdbtnMedium = new JRadioButton("Medium");
+		rdbtnMedium = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 2));
 		buttonGroup.add(rdbtnMedium);
 		rdbtnMedium.addActionListener(changeListener);
 		rdbtnMedium.setBounds(149, 11, 78, 23);
 		formPanel.add(rdbtnMedium);
 
-		rdbtnHigh = new JRadioButton("High");
+		rdbtnHigh = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 4));
 		buttonGroup.add(rdbtnHigh);
 		rdbtnHigh.addActionListener(changeListener);
 		rdbtnHigh.setBounds(229, 11, 71, 23);
@@ -184,7 +190,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		formPanel.add(chckbxClearOnStart);
 
 		depthLabel = new JLabel("4");
-		depthLabel.setBounds(49, 15, 46, 14);
+		depthLabel.setBounds(60, 15, 35, 14);
 		formPanel.add(depthLabel);
 	}
 
@@ -289,36 +295,44 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		btnCancel.setEnabled(start);
 	}
 
-	private ActionListener startHandler = o -> {
-		String txt = numberTextField.getText();
-		if (!StringUtils.isPositiveInteger(txt)) {
-			JOptionPane.showMessageDialog(mainApp.getFrame(), "Please input a positive number!",
-					"Invalid number string: " + txt, JOptionPane.WARNING_MESSAGE,
-					new ImageIcon(STUFF_FOLDER + "10_50x50.png"));
-			return;
-		}
-		mainApp.setIngame(true);
-		nWinGames = 0;
-		nCompletedGames = 0;
-		progressBar.setValue(0);
-		progressLabel.setText("0%");
-		progressPercent = 0;
-		nGames = Integer.parseInt(txt);
-		toggleBtn(true);
-		if (chckbxClearOnStart.isSelected()) {
-			clearConsole();
-		}
-		mutex = new Semaphore(1);
-		editorText.append("Start Simulating " + nGames + " Games...").append("\n");
-		editorPane.setText(editorText.toString());
-		executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL);
+	private ActionListener startHandler = new ActionListener() {
 
-		startTime = System.currentTimeMillis();
-		taskList = new LinkedList<>();
-		for (int i = 0; i < nGames; i++) {
-			SimulatedTask task = new SimulatedTask(this);
-			taskList.add(task);
-			executorService.submit(task);
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String txt = numberTextField.getText();
+			if (!StringUtils.isPositiveInteger(txt)) {
+				try {
+					JOptionPane.showMessageDialog(mainApp.getFrame(), "Please input a positive number!",
+							"Invalid number string: " + txt, JOptionPane.WARNING_MESSAGE,
+							new ImageIcon(new URL(STUFF_FOLDER, "10_50x50.png")));
+				} catch (HeadlessException | MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				return;
+			}
+			mainApp.setIngame(true);
+			nWinGames = 0;
+			nCompletedGames = 0;
+			progressBar.setValue(0);
+			progressLabel.setText("0%");
+			progressPercent = 0;
+			nGames = Integer.parseInt(txt);
+			toggleBtn(true);
+			if (chckbxClearOnStart.isSelected()) {
+				clearConsole();
+			}
+			mutex = new Semaphore(1);
+			editorText.append("Start Simulating " + nGames + " Games...").append("\n");
+			editorPane.setText(editorText.toString());
+			executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL);
+
+			startTime = System.currentTimeMillis();
+			taskList = new LinkedList<>();
+			for (int i = 0; i < nGames; i++) {
+				SimulatedTask task = new SimulatedTask(self);
+				taskList.add(task);
+				executorService.submit(task);
+			}
 		}
 	};
 
@@ -353,7 +367,8 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 			if (deltaTime > 60 * 1000) {
 				long minute = deltaTime / 1000 / 60;
 				long second = deltaTime / 1000 - 60 * minute;
-				editorText.append("=======> Executing Time: " + minute + " Minutes " + second + " Seconds").append("\n");
+				editorText.append("=======> Executing Time: " + minute + " Minutes " + second + " Seconds")
+						.append("\n");
 			} else {
 				editorText.append(
 						"=======> Executing Time: " + MathUtils.formatNumber(deltaTime * 1.0 / 1000) + " Seconds")

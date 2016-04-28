@@ -8,9 +8,12 @@ package com.chotoxautinh.game.view;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,7 +32,7 @@ public class ApplicationWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final String STUFF_FOLDER = Constant.STUFF.getFile();
+	public static final URL STUFF_FOLDER = Constant.STUFF;
 
 	private Application mainApp;
 	private CardLayout layout;
@@ -40,7 +43,11 @@ public class ApplicationWindow extends JFrame {
 	}
 
 	private void initialize() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(STUFF_FOLDER + "logo.jpg"));
+		try {
+			setIconImage(Toolkit.getDefaultToolkit().getImage(new URL(STUFF_FOLDER, "logo.jpg")));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		setTitle("2048");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -48,11 +55,16 @@ public class ApplicationWindow extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent we) {
 				Object objButtons[] = { "Sure... Byte Byte", "No" };
-				int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Are you sure you want to exit?",
-						"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-						new ImageIcon(STUFF_FOLDER + "9_50x50.png"), objButtons, objButtons[1]);
-				if (promptResult == JOptionPane.YES_OPTION) {
-					System.exit(0);
+				int promptResult;
+				try {
+					promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(), "Are you sure you want to exit?",
+							"Hello... It's me!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							new ImageIcon(new URL(STUFF_FOLDER, "9_50x50.png")), objButtons, objButtons[1]);
+					if (promptResult == JOptionPane.YES_OPTION) {
+						System.exit(0);
+					}
+				} catch (HeadlessException | MalformedURLException e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -78,7 +90,6 @@ public class ApplicationWindow extends JFrame {
 
 	private void showMainMenu() {
 		getContentPane().add(new MainMenu(mainApp), "Main Menu");
-		// getContentPane().add(new GameUI(mainApp), "Main Menu");
 		layout.show(getContentPane(), "Main Menu");
 	}
 
@@ -93,12 +104,17 @@ public class ApplicationWindow extends JFrame {
 	public void backToMainMenu() {
 		if (mainApp.isIngame()) {
 			Object objButtons[] = { "Yes", "No" };
-			int promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
-					"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.WARNING_MESSAGE, new ImageIcon(STUFF_FOLDER + "8_50x50.png"), objButtons,
-					objButtons[1]);
-			if (promptResult == JOptionPane.NO_OPTION) {
-				return;
+			int promptResult;
+			try {
+				promptResult = JOptionPane.showOptionDialog(mainApp.getFrame(),
+						"Are you sure you want to quit current game?", "Back to Main Menu!", JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE, new ImageIcon(new URL(STUFF_FOLDER, "8_50x50.png")), objButtons,
+						objButtons[1]);
+				if (promptResult == JOptionPane.NO_OPTION) {
+					return;
+				}
+			} catch (HeadlessException | MalformedURLException e) {
+				e.printStackTrace();
 			}
 			mainApp.setIngame(false);
 		}

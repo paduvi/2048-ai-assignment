@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class BoardPanel extends JPanel {
 	public static int HGAP = 15;
 	public static int VGAP = 15;
 	public static int CELL_SIZE = 106;
-	public static String TILE_FOLDER = Constant.TILES.getFile();
+	public static URL TILE_FOLDER = Constant.TILES;
 
 	private Board board;
 	Image bgImage;
@@ -36,10 +38,14 @@ public class BoardPanel extends JPanel {
 	}
 
 	private void loadImage() {
-		bgImage = Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + "background.png");
-		mapImage.put(0, Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + "0.gif"));
-		for (int i = 2; i < 2048; i = i * 2) {
-			mapImage.put(i, Toolkit.getDefaultToolkit().createImage(TILE_FOLDER + i + ".gif"));
+		try {
+			bgImage = Toolkit.getDefaultToolkit().createImage(new URL(TILE_FOLDER, "background.png"));
+			mapImage.put(0, Toolkit.getDefaultToolkit().createImage(new URL(TILE_FOLDER, "0.gif")));
+			for (int i = 2; i < 2048; i = i * 2) {
+				mapImage.put(i, Toolkit.getDefaultToolkit().createImage(new URL(TILE_FOLDER, i + ".gif")));
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		}
 	}
 

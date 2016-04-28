@@ -9,17 +9,20 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import com.chotoxautinh.ai.GameAgent;
 import com.chotoxautinh.game.controller.GameController;
 
 public class GetHintTask extends SwingWorker<Direction, Object> {
 
 	private GameController gameController;
+	private GameAgent gameAgent;
 
 	/**
 	 * 
 	 */
 	public GetHintTask(GameController gameController) {
 		this.gameController = gameController;
+		gameAgent = new GameAgent(gameController.getDepth());
 	}
 
 	/*
@@ -29,7 +32,7 @@ public class GetHintTask extends SwingWorker<Direction, Object> {
 	 */
 	@Override
 	protected Direction doInBackground() throws Exception {
-		return gameController.getGameAgent().process(gameController.getBoard());
+		return gameAgent.process(gameController.getBoard());
 	}
 
 	/*
@@ -39,6 +42,8 @@ public class GetHintTask extends SwingWorker<Direction, Object> {
 	 */
 	@Override
 	protected void done() {
+		if(gameAgent.isCancelled())
+			return;
 		try {
 			gameController.handleHint(get());
 		} catch (InterruptedException e) {
@@ -48,6 +53,10 @@ public class GetHintTask extends SwingWorker<Direction, Object> {
 			gameController.handleHint(Direction.NONE);
 			e.printStackTrace();
 		}
+	}
+
+	public void cancel() {
+		gameAgent.cancel();
 	}
 
 }

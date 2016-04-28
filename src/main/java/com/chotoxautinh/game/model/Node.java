@@ -1,6 +1,7 @@
 package com.chotoxautinh.game.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Node {
@@ -9,12 +10,12 @@ public class Node {
 	private List<Node> children;
 	private boolean leaf = false;
 	private Direction direction;
-	private Direction valueDirOfChild;
-	private int actualScore;
-	
+	private Board board;
+
 	public Node() {
 		children = new ArrayList<Node>();
 	}
+
 	public int getValue() {
 		return value;
 	}
@@ -46,21 +47,25 @@ public class Node {
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-	
-	public void setValueDirOfChild(Direction dir) {
-		this.valueDirOfChild = dir;
+
+	public Board getBoard() {
+		return board;
 	}
-	
-	public Direction getValueDirOfChild() {
-		return this.valueDirOfChild;
+
+	public void setBoard(Board board) {
+		this.board = board;
 	}
+
+	public static final Comparator<Node> ASC_COMPARATOR = new Comparator<Node>() {
+		public int compare(Node node1, Node node2) {
+			return node1.getValue() - node2.getValue();
+		}
+	};
 	
-	public void setActualScore(int score) {
-		this.actualScore = score;
-	}
-	
-	public int getActualScore() {
-		return actualScore;
-	}
+	public static final Comparator<Node> DESC_COMPARATOR = new Comparator<Node>() {
+		public int compare(Node node1, Node node2) {
+			return node2.getValue() - node1.getValue();
+		}
+	};
 
 }
