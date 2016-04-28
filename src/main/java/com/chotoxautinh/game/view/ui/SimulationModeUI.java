@@ -76,7 +76,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private Semaphore mutex;
 	private Long startTime;
 
-	private static final int MAX_THREAD_POOL = 5;
+	private static final int MAX_THREAD_POOL = Constant.MAX_THREAD_POOL;
 	private ExecutorService executorService;
 
 	private JEditorPane editorPane;
@@ -238,6 +238,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private ActionListener cancelHandler = o -> {
 		for (SimulatedTask task : taskList) {
 			task.setStop(true);
+			task = null;
 		}
 		editorText.append("Canceled Simulating Process!").append("\n");
 		editorPane.setText(editorText.toString());
@@ -255,7 +256,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 				break;
 			}
 		}
-		if (index < 4) {
+		if (index < 3) {
 			slider.setEnabled(false);
 			setDepth(start + index * 2);
 			return;
