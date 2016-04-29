@@ -17,12 +17,11 @@ public class GameAgent {
 	}
 
 	public Direction process(Board board) throws CloneNotSupportedException {
-		this.treeRoot = new Node();
+		this.treeRoot = new Node(board);
 		setCancelled(false);
-		treeRoot.setBoard(board);
-//		Long start = System.currentTimeMillis();
+		// Long start = System.currentTimeMillis();
 		alphaBeta(treeRoot, depth, Integer.MIN_VALUE, Integer.MAX_VALUE);
-//		System.out.println(System.currentTimeMillis() - start);
+		// System.out.println(System.currentTimeMillis() - start);
 		return findBestDirectionForPlayer(treeRoot);
 	}
 
@@ -63,11 +62,10 @@ public class GameAgent {
 			for (int i = 1; i < Direction.values().length; i++) {
 				Direction direction = Direction.values()[i];
 				if (board.canMove(direction)) {
-					Node child = new Node();
-					child.setDirection(direction);
 					Board boardOfChildNode = (Board) board.clone();
 					boardOfChildNode.move(direction);
-					child.setBoard(boardOfChildNode);
+					Node child = new Node(boardOfChildNode);
+					child.setDirection(direction);
 					setHeuristicScore(child);
 					root.appendChild(child);
 				}
@@ -85,17 +83,16 @@ public class GameAgent {
 			root.setValue(alpha);
 		} else {
 			int[] newvalue = { 2, 4 };
-			for (int emptyCellPos = 0; emptyCellPos < board.getNumberOfEmptyCells(); emptyCellPos++) {
+			for (int id : board.getEmptyCellIds()) {
 
-				int row = board.getEmptyCellIds().get(emptyCellPos) / 4;
-				int col = board.getEmptyCellIds().get(emptyCellPos) % 4;
+				int row = id / 4;
+				int col = id % 4;
 
 				for (int valueOfCell : newvalue) {
-					Node child = new Node();
-					child.setDirection(Direction.NONE);
 					Board boardOfChild = (Board) board.clone();
 					boardOfChild.setValueToCell(valueOfCell, row, col);
-					child.setBoard(boardOfChild);
+					Node child = new Node(boardOfChild);
+					child.setDirection(Direction.NONE);
 					setHeuristicScore(child);
 					root.appendChild(child);
 				}

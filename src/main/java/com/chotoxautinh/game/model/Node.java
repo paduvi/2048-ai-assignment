@@ -12,8 +12,9 @@ public class Node {
 	private Direction direction;
 	private Board board;
 
-	public Node() {
+	public Node(Board board) {
 		children = new ArrayList<Node>();
+		setBoard(board);
 	}
 
 	public int getValue() {
