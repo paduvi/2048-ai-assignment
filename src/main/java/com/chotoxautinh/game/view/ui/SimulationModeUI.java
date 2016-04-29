@@ -136,25 +136,25 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		buttonGroup.add(rdbtnLow);
 		rdbtnLow.addActionListener(changeListener);
 		rdbtnLow.setSelected(true);
-		rdbtnLow.setBounds(80, 11, 67, 23);
+		rdbtnLow.setBounds(110, 11, 47, 23);
 		formPanel.add(rdbtnLow);
 
 		rdbtnMedium = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 2));
 		buttonGroup.add(rdbtnMedium);
 		rdbtnMedium.addActionListener(changeListener);
-		rdbtnMedium.setBounds(149, 11, 78, 23);
+		rdbtnMedium.setBounds(166, 11, 52, 23);
 		formPanel.add(rdbtnMedium);
 
 		rdbtnHigh = new JRadioButton(String.valueOf(Constant.SIMULATED_START_DEPTH + 4));
 		buttonGroup.add(rdbtnHigh);
 		rdbtnHigh.addActionListener(changeListener);
-		rdbtnHigh.setBounds(229, 11, 71, 23);
+		rdbtnHigh.setBounds(220, 11, 52, 23);
 		formPanel.add(rdbtnHigh);
 
 		rdbtnCustom = new JRadioButton("Custom");
 		buttonGroup.add(rdbtnCustom);
 		rdbtnCustom.addActionListener(changeListener);
-		rdbtnCustom.setBounds(302, 11, 78, 23);
+		rdbtnCustom.setBounds(274, 11, 100, 23);
 		formPanel.add(rdbtnCustom);
 
 		numberTextField = new JTextField();
@@ -189,7 +189,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		chckbxClearOnStart.setBounds(301, 48, 111, 23);
 		formPanel.add(chckbxClearOnStart);
 
-		depthLabel = new JLabel("4");
+		depthLabel = new JLabel(String.valueOf(Constant.SIMULATED_START_DEPTH));
 		depthLabel.setBounds(60, 15, 35, 14);
 		formPanel.add(depthLabel);
 	}

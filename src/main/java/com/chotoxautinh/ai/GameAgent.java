@@ -14,13 +14,15 @@ public class GameAgent {
 
 	public GameAgent(int depth) {
 		this.setDepth(depth);
-		this.treeRoot = new Node();
 	}
 
 	public Direction process(Board board) throws CloneNotSupportedException {
+		this.treeRoot = new Node();
 		setCancelled(false);
 		treeRoot.setBoard(board);
+//		Long start = System.currentTimeMillis();
 		alphaBeta(treeRoot, depth, Integer.MIN_VALUE, Integer.MAX_VALUE);
+//		System.out.println(System.currentTimeMillis() - start);
 		return findBestDirectionForPlayer(treeRoot);
 	}
 
@@ -33,7 +35,7 @@ public class GameAgent {
 	}
 
 	private void alphaBeta(Node root, int depth, int alpha, int beta) throws CloneNotSupportedException {
-		if(isCancelled())
+		if (isCancelled())
 			return;
 		Board board = root.getBoard();
 
@@ -141,13 +143,13 @@ public class GameAgent {
 	public boolean isCancelled() {
 		return cancelled;
 	}
-	
-	private void setCancelled(boolean cancelled){
+
+	private void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 
 	public void cancel() {
 		setCancelled(true);
 	}
-	
+
 }
