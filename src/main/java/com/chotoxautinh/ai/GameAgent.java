@@ -17,11 +17,12 @@ public class GameAgent {
 	}
 
 	public Direction process(Board board) throws CloneNotSupportedException {
-		this.treeRoot = new Node(board);
+		treeRoot = new Node(board);
+		treeRoot.setDirection(Direction.NONE);
 		setCancelled(false);
-		// Long start = System.currentTimeMillis();
+		Long start = System.currentTimeMillis();
 		alphaBeta(treeRoot, depth, Integer.MIN_VALUE, Integer.MAX_VALUE);
-		// System.out.println(System.currentTimeMillis() - start);
+		System.out.println(System.currentTimeMillis() - start);
 		return findBestDirectionForPlayer(treeRoot);
 	}
 
@@ -47,18 +48,13 @@ public class GameAgent {
 			root.setLeaf(true);
 			return;
 		}
-		if (root.getDirection() == Direction.NONE && board.getNumberOfEmptyCells() == 0) {
-			root.setValue(Math.min(board.getActualScore(), 0));
-			root.setLeaf(true);
-			return;
-		}
 		if (depth == 0) {
 			setHeuristicScore(root);
 			root.setLeaf(true);
 			return;
 		}
 		// alpha-beta pruning
-		if (root.getDirection() != Direction.NONE) {
+		if (root.getDirection() == Direction.NONE) {
 			for (int i = 1; i < Direction.values().length; i++) {
 				Direction direction = Direction.values()[i];
 				if (board.canMove(direction)) {

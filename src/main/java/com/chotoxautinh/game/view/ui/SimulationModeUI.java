@@ -70,7 +70,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private JButton btnCancel;
 
 	private Application mainApp;
-	private int depth = 4;
+	private int depth = Constant.SIMULATED_START_DEPTH;
 
 	private double progressPercent;
 	private int nGames;
