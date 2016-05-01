@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -42,11 +43,12 @@ public class HighScoreModal extends JDialog {
 	private String columnNames[] = { "No.", "Player Name", "Score" };
 	private Object rowData[][] = new Object[10][3];
 
-	public HighScoreModal() {
-		this(null);
+	public HighScoreModal(JFrame parent) {
+		this(parent, null);
 	}
 
-	public HighScoreModal(HighScore currentPoint) {
+	public HighScoreModal(JFrame parent, HighScore currentPoint) {
+		super(parent);
 		setCurrentPoint(currentPoint);
 		initialize();
 	}
@@ -108,7 +110,7 @@ public class HighScoreModal extends JDialog {
 		for (HighScore score : listData) {
 			if (i >= Constant.NUMBER_HIGHSCORE)
 				break;
-			rowData[i][0] = i;
+			rowData[i][0] = i + 1;
 			rowData[i][1] = score.getName();
 			rowData[i][2] = score.getScore();
 			i++;

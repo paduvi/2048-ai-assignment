@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,8 +46,12 @@ import javax.swing.event.ChangeListener;
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.model.Board;
+import com.chotoxautinh.game.model.HighScore;
 import com.chotoxautinh.game.model.SimulatedTask;
 import com.chotoxautinh.game.view.component.CardPanel;
+import com.chotoxautinh.util.FileUtils;
+import com.chotoxautinh.util.JsonUtils;
+import com.chotoxautinh.util.ListUtils;
 import com.chotoxautinh.util.MathUtils;
 import com.chotoxautinh.util.StringUtils;
 
@@ -77,7 +83,8 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	private int nCompletedGames;
 	private int nWinGames;
 
-	private Semaphore mutex;
+	private Semaphore processMutex;
+	private Semaphore dbMutex = new Semaphore(1);
 	private Long startTime;
 	private SimulationModeUI self;
 
@@ -321,7 +328,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 			if (chckbxClearOnStart.isSelected()) {
 				clearConsole();
 			}
-			mutex = new Semaphore(1);
+			processMutex = new Semaphore(1);
 			editorText.append("Start Simulating " + nGames + " Games...").append("\n");
 			editorPane.setText(editorText.toString());
 			executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL);
@@ -350,6 +357,19 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 		} else if (board.hasWon()) {
 			nWinGames++;
 			editorText.append("Game " + nCompletedGames + " has won - Score: " + board.getActualScore() + ".");
+			try {
+				dbMutex.acquire();
+
+				String json = FileUtils.readFile(Constant.SAVE_FILE);
+				HighScore[] arr = JsonUtils.fromJson(json, HighScore[].class);
+				List<HighScore> listData = new ArrayList<>(Arrays.asList(arr));
+				ListUtils.insert(listData, new HighScore("BetaGâu L" + depth, board.getActualScore()));
+				FileUtils.writeFile(Constant.SAVE_FILE, JsonUtils.toJson(listData));
+
+				dbMutex.release();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		} else {
 			try {
 				if (board.isTerminated()) {
@@ -418,7 +438,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 	}
 
 	public Semaphore getMutex() {
-		return mutex;
+		return processMutex;
 	}
 
 	/*

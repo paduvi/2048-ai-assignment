@@ -4,7 +4,7 @@
 	<groupId>com.chotoxautinh</groupId>
 	<artifactId>2048-ai-assignment</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -12,7 +12,7 @@
 			<version>2.6.2</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>2048-ai-assignment</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -23,6 +23,15 @@
 			</resource>
 		</resources>
 		<plugins>
+			<!-- we want JDK 1.8 source and binary compatiblility -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>

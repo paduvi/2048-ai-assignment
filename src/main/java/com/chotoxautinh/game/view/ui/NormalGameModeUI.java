@@ -322,7 +322,8 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 	public void displayWinResult() {
 		displayGameLayout(WIN);
 		endGame();
-		HighScoreModal modal = new HighScoreModal(new HighScore("Player", gameController.getBoard().getActualScore()));
+		HighScoreModal modal = new HighScoreModal(mainApp.getFrame(),
+				new HighScore("Player", gameController.getBoard().getActualScore()));
 		modal.setVisible(true);
 	}
 

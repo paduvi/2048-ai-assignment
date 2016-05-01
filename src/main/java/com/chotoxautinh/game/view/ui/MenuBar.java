@@ -23,6 +23,7 @@ import javax.swing.KeyStroke;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.config.Constant;
+import com.chotoxautinh.game.view.HighScoreModal;
 
 public class MenuBar extends JMenuBar {
 
@@ -46,6 +47,7 @@ public class MenuBar extends JMenuBar {
 	private void initComponent() {
 		JMenu mnFile = new JMenu("File");
 		addMenuItem(mnFile, "Main Menu", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), mmHandler);
+		addMenuItem(mnFile, "High Score", KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), highScoreHandler);
 		addMenuItem(mnFile, "Exit", KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK), exitHandler);
 		add(mnFile);
 
@@ -63,6 +65,11 @@ public class MenuBar extends JMenuBar {
 	}
 
 	private ActionListener mmHandler = o -> mainApp.getFrame().backToMainMenu();
+	
+	private ActionListener highScoreHandler = o -> {
+		HighScoreModal modal = new HighScoreModal(mainApp.getFrame());
+		modal.setVisible(true);
+	};
 
 	private ActionListener exitHandler = o -> mainApp.getFrame()
 			.dispatchEvent(new WindowEvent(mainApp.getFrame(), WindowEvent.WINDOW_CLOSING));

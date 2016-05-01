@@ -95,7 +95,7 @@ public class MainMenu extends JPanel {
 	};
 	
 	private ActionListener highScoreHandler = o->{
-		HighScoreModal modal = new HighScoreModal();
+		HighScoreModal modal = new HighScoreModal(mainApp.getFrame());
 		modal.setVisible(true);
 	};
 
