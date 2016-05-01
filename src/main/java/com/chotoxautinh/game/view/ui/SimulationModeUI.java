@@ -379,7 +379,7 @@ public class SimulationModeUI extends JPanel implements CardPanel {
 			progressBar.setValue(100);
 			progressLabel.setText("100%");
 			mainApp.setIngame(false);
-			editorText.append("=======> WIN RATE: " + MathUtils.formatNumber(nWinGames * 1.0 / nGames)).append("\n");
+			editorText.append("=======> WIN RATE: " + MathUtils.formatNumber(nWinGames * 100.0 / nGames)).append("%\n");
 			editorPane.setText(editorText.toString());
 		}
 	}

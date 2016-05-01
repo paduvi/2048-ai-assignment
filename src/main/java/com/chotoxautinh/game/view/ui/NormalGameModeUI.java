@@ -41,6 +41,8 @@ import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.config.Constant;
 import com.chotoxautinh.game.controller.GameController;
 import com.chotoxautinh.game.model.Direction;
+import com.chotoxautinh.game.model.HighScore;
+import com.chotoxautinh.game.view.HighScoreModal;
 import com.chotoxautinh.game.view.component.BoardPanel;
 import com.chotoxautinh.game.view.component.CardPanel;
 import com.chotoxautinh.game.view.component.ImagePanel;
@@ -320,6 +322,8 @@ public class NormalGameModeUI extends JPanel implements CardPanel {
 	public void displayWinResult() {
 		displayGameLayout(WIN);
 		endGame();
+		HighScoreModal modal = new HighScoreModal(new HighScore("Player", gameController.getBoard().getActualScore()));
+		modal.setVisible(true);
 	}
 
 	private void endGame() {

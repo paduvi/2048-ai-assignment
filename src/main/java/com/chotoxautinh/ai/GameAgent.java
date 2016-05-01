@@ -18,11 +18,10 @@ public class GameAgent {
 
 	public Direction process(Board board) throws CloneNotSupportedException {
 		treeRoot = new Node(board);
-		treeRoot.setDirection(Direction.NONE);
 		setCancelled(false);
-		Long start = System.currentTimeMillis();
+//		Long start = System.currentTimeMillis();
 		alphaBeta(treeRoot, depth, Integer.MIN_VALUE, Integer.MAX_VALUE);
-		System.out.println(System.currentTimeMillis() - start);
+//		System.out.println(System.currentTimeMillis() - start);
 		return findBestDirectionForPlayer(treeRoot);
 	}
 
@@ -88,7 +87,6 @@ public class GameAgent {
 					Board boardOfChild = (Board) board.clone();
 					boardOfChild.setValueToCell(valueOfCell, row, col);
 					Node child = new Node(boardOfChild);
-					child.setDirection(Direction.NONE);
 					setHeuristicScore(child);
 					root.appendChild(child);
 				}

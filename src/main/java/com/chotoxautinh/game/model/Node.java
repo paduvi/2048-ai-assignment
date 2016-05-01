@@ -7,13 +7,12 @@ import java.util.List;
 public class Node {
 
 	private int value;
-	private List<Node> children;
+	private List<Node> children = new ArrayList<Node>();
 	private boolean leaf = false;
-	private Direction direction;
+	private Direction direction = Direction.NONE;
 	private Board board;
 
 	public Node(Board board) {
-		children = new ArrayList<Node>();
 		setBoard(board);
 	}
 

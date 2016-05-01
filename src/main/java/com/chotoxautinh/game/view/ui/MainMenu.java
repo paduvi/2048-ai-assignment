@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 
 import com.chotoxautinh.game.Application;
 import com.chotoxautinh.game.config.Constant;
+import com.chotoxautinh.game.view.HighScoreModal;
 
 public class MainMenu extends JPanel {
 
@@ -78,7 +79,7 @@ public class MainMenu extends JPanel {
 
 		addBtn("New Game", NEW_GAME_ICON, newGameHandler);
 		addBtn("Simulation", SIMULATION_ICON, simulationHandler);
-		addBtn("High Score", HIGH_SCORE_ICON, null);
+		addBtn("High Score", HIGH_SCORE_ICON, highScoreHandler);
 	}
 
 	private ActionListener newGameHandler = o -> {
@@ -91,6 +92,11 @@ public class MainMenu extends JPanel {
 		SimulationModeUI gameUI = new SimulationModeUI(mainApp);
 		mainApp.getFrame().getContentPane().add(gameUI, "content");
 		mainApp.getFrame().getLayout().show(mainApp.getFrame().getContentPane(), "content");
+	};
+	
+	private ActionListener highScoreHandler = o->{
+		HighScoreModal modal = new HighScoreModal();
+		modal.setVisible(true);
 	};
 
 	private void addBtn(String title, int imgNum, ActionListener listener) {

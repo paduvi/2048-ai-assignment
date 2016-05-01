@@ -1,13 +1,10 @@
 package com.chotoxautinh.util;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ListUtils {
 	
-	public static <T extends Comparable<T>> Map<List<T>, Integer> insert(List<T> list, T object) {
-		Map<List<T>,Integer> map = new HashMap<List<T>,Integer>();
+	public static <T extends Comparable<T>> int insert(List<T> list, T object) {
 		int index = 0;
 		for(T item : list){
 			if(object.compareTo(item) > 0)
@@ -15,8 +12,7 @@ public class ListUtils {
 			index++;
 		}
 		list.add(index, object);
-		map.put(list, index);
 			
-		return map;
+		return index;
 	}
 }
